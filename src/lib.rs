@@ -79,8 +79,27 @@ struct DllExport {
 
 /// Parses 'stable_abi.txt' export symbol definitions
 fn parse_stable_abi_defs(defs: &str) -> Vec<DllExport> {
-    // TODO: Implement the 'stable_abi.txt' syntax parser here.
-    Vec::with_capacity(defs.lines().count())
+    // Try to estimate the number of records from the file size.
+    let mut exports = Vec::with_capacity(defs.len() / 32);
+
+    for line in defs.lines() {
+        let is_data = if line.starts_with("function") {
+            false
+        } else if line.starts_with("data") {
+            true
+        } else {
+            // Skip everything but "function" and "data" entries.
+            continue;
+        };
+
+        // Parse "function|data PyFoo"-like strings.
+        if let Some(name) = line.split_ascii_whitespace().nth(1) {
+            let symbol = name.to_owned();
+            exports.push(DllExport { symbol, is_data })
+        }
+    }
+
+    exports
 }
 
 /// Writes Module-Definition file export statements.
@@ -122,6 +141,23 @@ mod tests {
     #[test]
     fn abi_defs_len() {
         assert_eq!(STABLE_ABI_DEFS.len(), 48836);
+    }
+
+    #[test]
+    fn parse_stable_abi_txt() {
+        let stable_abi_exports = parse_stable_abi_defs(STABLE_ABI_DEFS);
+
+        assert_eq!(stable_abi_exports.len(), 857);
+        // assert_eq!(stable_abi_exports.capacity(), 1526);
+
+        let data_sym_num = stable_abi_exports.iter().filter(|x| x.is_data).count();
+        assert_eq!(data_sym_num, 143);
+
+        assert_eq!(stable_abi_exports[0].symbol, "PyType_FromSpec");
+        assert!(!stable_abi_exports[0].is_data);
+
+        assert_eq!(stable_abi_exports[200].symbol, "PyExc_UnicodeDecodeError");
+        assert!(stable_abi_exports[200].is_data);
     }
 
     #[test]
