@@ -9,11 +9,16 @@
 //! This crate **does not require** Python 3 distribution files
 //! to be present on the cross-compile host system.
 
+#![deny(missing_docs)]
+
 use std::fs::create_dir_all;
 use std::fs::File;
-use std::io::{Error, ErrorKind, Result, Write};
+use std::io::{BufWriter, Error, ErrorKind, Result, Write};
 use std::path::PathBuf;
 use std::process::Command;
+
+/// Stable ABI Python DLL file name
+const DLL_FILE: &str = "python3.dll";
 
 /// Canonical `python3.dll` import library file name for MinGW-w64
 const IMPLIB_FILE: &str = "python3.dll.a";
@@ -43,8 +48,11 @@ pub fn generate_implib(out_dir: &str) -> Result<()> {
     libpath.push(IMPLIB_FILE);
     defpath.push(DEF_FILE);
 
-    // TODO: Generate a syntactically valid Module-Definition file.
-    File::create(&defpath)?.write_all(STABLE_ABI_DEFS.as_bytes())?;
+    let stable_abi_exports = parse_stable_abi_defs(STABLE_ABI_DEFS);
+
+    let mut writer = BufWriter::new(File::create(&defpath)?);
+    write_export_defs(&mut writer, DLL_FILE, &stable_abi_exports)?;
+    drop(writer);
 
     let status = Command::new(DLLTOOL)
         .arg("--input-def")
@@ -59,6 +67,41 @@ pub fn generate_implib(out_dir: &str) -> Result<()> {
         let msg = format!("{DLLTOOL} failed with {status}");
         Err(Error::new(ErrorKind::Other, msg))
     }
+}
+
+/// Exported DLL symbol definition
+struct DllExport {
+    /// Export symbol name
+    symbol: String,
+    /// Data symbol flag
+    is_data: bool,
+}
+
+/// Parses 'stable_abi.txt' export symbol definitions
+fn parse_stable_abi_defs(defs: &str) -> Vec<DllExport> {
+    // TODO: Implement the 'stable_abi.txt' syntax parser here.
+    Vec::with_capacity(defs.lines().count())
+}
+
+/// Writes Module-Definition file export statements.
+///
+/// The library module name is passed in `dll_name`,
+/// the list of exported symbols - in `exports`.
+///
+/// See <https://docs.microsoft.com/en-us/cpp/build/reference/module-definition-dot-def-files>.
+fn write_export_defs(writer: &mut impl Write, dll_name: &str, exports: &[DllExport]) -> Result<()> {
+    writeln!(writer, "LIBRARY \"{dll_name}\"")?;
+    writeln!(writer, "EXPORTS")?;
+
+    for e in exports {
+        if e.is_data {
+            writeln!(writer, "{} DATA", e.symbol)?;
+        } else {
+            writeln!(writer, "{}", e.symbol)?;
+        }
+    }
+
+    Ok(())
 }
 
 #[cfg(test)]
@@ -79,5 +122,26 @@ mod tests {
     #[test]
     fn abi_defs_len() {
         assert_eq!(STABLE_ABI_DEFS.len(), 48836);
+    }
+
+    #[test]
+    fn write_exports() {
+        let function = DllExport {
+            symbol: "foo".to_owned(),
+            is_data: false,
+        };
+        let data = DllExport {
+            symbol: "buf".to_owned(),
+            is_data: true,
+        };
+        let exports = vec![function, data];
+
+        let mut writer = Vec::new();
+        write_export_defs(&mut writer, DLL_FILE, &exports).unwrap();
+
+        assert_eq!(
+            String::from_utf8(writer).unwrap(),
+            "LIBRARY \"python3.dll\"\nEXPORTS\nfoo\nbuf DATA\n"
+        );
     }
 }
