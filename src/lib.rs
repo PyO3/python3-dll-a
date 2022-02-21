@@ -8,8 +8,36 @@
 //!
 //! This crate **does not require** Python 3 distribution files
 //! to be present on the cross-compile host system.
+//!
+//! Example `build.rs` script
+//! -------------------------
+//!
+//! The following script can be used to cross-compile Stable ABI
+//! PyO3 extension modules for Windows:
+//!
+//! ```no_run
+//! fn main() {
+//!     if std::env::var("TARGET").unwrap() == "x86_64-pc-windows-gnu" {
+//!         let libdir = std::env::var("PYO3_CROSS_LIB_DIR")
+//!             .expect("PYO3_CROSS_LIB_DIR is not set when cross-compiling");
+//!         python3_dll_a::generate_implib(&libdir)
+//!             .expect("python3.dll import library generator failed");
+//!     }
+//! }
+//! ```
+//!
+//! A compatible `python3.dll` import library will be automatically created in
+//! the directory pointed by `PYO3_CROSS_LIB_DIR` environment variable.
+//!
+//! Example `cargo build` invocation
+//! --------------------------------
+//!
+//! ```sh
+//! PYO3_CROSS_LIB_DIR=target/python3-dll cargo build --target x86_64-pc-windows-gnu
+//! ```
 
 #![deny(missing_docs)]
+#![allow(clippy::needless_doctest_main)]
 
 use std::fs::create_dir_all;
 use std::fs::File;
