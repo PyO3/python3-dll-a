@@ -29,6 +29,23 @@
 //! A compatible `python3.dll` import library will be automatically created in
 //! the directory pointed by `PYO3_CROSS_LIB_DIR` environment variable.
 //!
+//! If both 64-bit and 32-bit Windows cross-compile targets support is needed,
+//! the more generic `generate_implib_for_target()` function must be used:
+//!
+//! ```no_run
+//! fn main() {
+//!     if std::env::var("CARGO_CFG_TARGET_OS").unwrap() == "windows"
+//!         && std::env::var("CARGO_CFG_TARGET_ENV").unwrap() == "gnu"
+//!     {
+//!         let libdir = std::env::var("PYO3_CROSS_LIB_DIR")
+//!             .expect("PYO3_CROSS_LIB_DIR is not set when cross-compiling");
+//!         let arch = std::env::var("CARGO_CFG_TARGET_ARCH").unwrap();
+//!         python3_dll_a::generate_implib_for_target(&libdir, &arch, "gnu")
+//!             .expect("python3.dll import library generator failed");
+//!     }
+//! }
+//! ```
+//!
 //! Example `cargo build` invocation
 //! --------------------------------
 //!
