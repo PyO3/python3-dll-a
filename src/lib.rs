@@ -13,7 +13,7 @@
 //! -------------------------
 //!
 //! The following script can be used to cross-compile Stable ABI
-//! PyO3 extension modules for Windows:
+//! PyO3 extension modules for Windows (64-bit):
 //!
 //! ```no_run
 //! fn main() {
@@ -57,17 +57,26 @@ const DEF_FILE: &str = "python3.def";
 /// Canonical MinGW-w64 `dlltool` program name
 const DLLTOOL: &str = "x86_64-w64-mingw32-dlltool";
 
+/// Canonical MinGW-w64 `dlltool` program name (32-bit version)
+const DLLTOOL_32: &str = "i686-w64-mingw32-dlltool";
+
 /// Python Stable ABI symbol defs from the CPython repository
 ///
 /// Upstream source: <https://github.com/python/cpython/blob/main/Misc/stable_abi.txt>
 const STABLE_ABI_DEFS: &str = include_str!("../Misc/stable_abi.txt");
 
 /// Generates `python3.dll` import library directly from the embedded
-/// Python Stable ABI definitions data.
+/// Python Stable ABI definitions data for the specified compile target.
 ///
 /// The import library file named `python3.dll.a` is created
 /// in directory `out_dir`.
-pub fn generate_implib(out_dir: &str) -> Result<()> {
+///
+/// The compile target architecture name (as in `CARGO_CFG_TARGET_ARCH`)
+/// is passed in `arch`.
+///
+/// The compile target environment ABI name (as in `CARGO_CFG_TARGET_ENV`)
+/// is passed in `env`.
+pub fn generate_implib_for_target(out_dir: &str, arch: &str, env: &str) -> Result<()> {
     create_dir_all(out_dir)?;
 
     let mut libpath = PathBuf::from(out_dir);
@@ -82,7 +91,19 @@ pub fn generate_implib(out_dir: &str) -> Result<()> {
     write_export_defs(&mut writer, DLL_FILE, &stable_abi_exports)?;
     drop(writer);
 
-    let status = Command::new(DLLTOOL)
+    // Try to guess the `dlltool` executable name from the target triple.
+    let dlltool = match (arch, env) {
+        // 64-bit MinGW-w64 (aka x86_64-pc-windows-gnu)
+        ("x86_64", "gnu") => DLLTOOL,
+        // 32-bit MinGW-w64 (aka i686-pc-windows-gnu)
+        ("x86", "gnu") => DLLTOOL_32,
+        _ => {
+            let msg = format!("Unsupported target arch '{arch}' or env ABI '{env}'");
+            return Err(Error::new(ErrorKind::Other, msg));
+        }
+    };
+
+    let status = Command::new(dlltool)
         .arg("--input-def")
         .arg(defpath)
         .arg("--output-lib")
@@ -92,9 +113,22 @@ pub fn generate_implib(out_dir: &str) -> Result<()> {
     if status.success() {
         Ok(())
     } else {
-        let msg = format!("{DLLTOOL} failed with {status}");
+        let msg = format!("{dlltool} failed with {status}");
         Err(Error::new(ErrorKind::Other, msg))
     }
+}
+
+/// Generates `python3.dll` import library directly from the embedded
+/// Python Stable ABI definitions data for the default 64-bit MinGW-w64
+/// compile target.
+///
+/// The import library file named `python3.dll.a` is created
+/// in directory `out_dir`.
+///
+/// The import library is generated for the default `x86_64-pc-windows-gnu`
+/// cross-compile target.
+pub fn generate_implib(out_dir: &str) -> Result<()> {
+    generate_implib_for_target(out_dir, "x86_64", "gnu")
 }
 
 /// Exported DLL symbol definition
