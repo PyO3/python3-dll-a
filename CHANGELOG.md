@@ -2,6 +2,16 @@
 
 All notable changes to this project will be documented in this file.
 
+## [0.1.1] - 2022-03-14
+
+### Documentation
+
+- Add multi-arch `build.rs` examples
+
+### Features
+
+- Add support for the 32-bit target architecture
+
 ## [0.1.0] - 2022-02-21
 
 ### Documentation

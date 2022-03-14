@@ -1,6 +1,6 @@
 [package]
 name = "python3-dll-a"
-version = "0.1.0"
+version = "0.1.1"
 edition = "2021"
 description = "Standalone python3.dll import library generator"
 repository = "https://github.com/ravenexp/python3-dll-a"
