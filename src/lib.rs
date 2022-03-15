@@ -59,23 +59,29 @@
 use std::fs::create_dir_all;
 use std::fs::File;
 use std::io::{BufWriter, Error, ErrorKind, Result, Write};
-use std::path::PathBuf;
+use std::path::{Path, PathBuf};
 use std::process::Command;
 
 /// Stable ABI Python DLL file name
 const DLL_FILE: &str = "python3.dll";
 
-/// Canonical `python3.dll` import library file name for MinGW-w64
-const IMPLIB_FILE: &str = "python3.dll.a";
-
 /// Module-Definition file name for `python3.dll`
 const DEF_FILE: &str = "python3.def";
 
+/// Canonical `python3.dll` import library file name for the GNU environment ABI (MinGW-w64)
+const IMPLIB_FILE_GNU: &str = "python3.dll.a";
+
+/// Canonical `python3.dll` import library file name for the MSVC environment ABI
+const IMPLIB_FILE_MSVC: &str = "python3.lib";
+
 /// Canonical MinGW-w64 `dlltool` program name
-const DLLTOOL: &str = "x86_64-w64-mingw32-dlltool";
+const DLLTOOL_GNU: &str = "x86_64-w64-mingw32-dlltool";
 
 /// Canonical MinGW-w64 `dlltool` program name (32-bit version)
-const DLLTOOL_32: &str = "i686-w64-mingw32-dlltool";
+const DLLTOOL_GNU_32: &str = "i686-w64-mingw32-dlltool";
+
+/// Canonical `dlltool` program name for the MSVC environment ABI (LLVM dlltool)
+const DLLTOOL_MSVC: &str = "llvm-dlltool";
 
 /// Python Stable ABI symbol defs from the CPython repository
 ///
@@ -96,10 +102,7 @@ const STABLE_ABI_DEFS: &str = include_str!("../Misc/stable_abi.txt");
 pub fn generate_implib_for_target(out_dir: &str, arch: &str, env: &str) -> Result<()> {
     create_dir_all(out_dir)?;
 
-    let mut libpath = PathBuf::from(out_dir);
-    let mut defpath = libpath.clone();
-
-    libpath.push(IMPLIB_FILE);
+    let mut defpath = PathBuf::from(out_dir);
     defpath.push(DEF_FILE);
 
     let stable_abi_exports = parse_stable_abi_defs(STABLE_ABI_DEFS);
@@ -111,21 +114,19 @@ pub fn generate_implib_for_target(out_dir: &str, arch: &str, env: &str) -> Resul
     // Try to guess the `dlltool` executable name from the target triple.
     let dlltool = match (arch, env) {
         // 64-bit MinGW-w64 (aka x86_64-pc-windows-gnu)
-        ("x86_64", "gnu") => DLLTOOL,
+        ("x86_64", "gnu") => DLLTOOL_GNU,
         // 32-bit MinGW-w64 (aka i686-pc-windows-gnu)
-        ("x86", "gnu") => DLLTOOL_32,
+        ("x86", "gnu") => DLLTOOL_GNU_32,
+        // MSVC ABI (multiarch)
+        (_, "msvc") => DLLTOOL_MSVC,
         _ => {
             let msg = format!("Unsupported target arch '{arch}' or env ABI '{env}'");
             return Err(Error::new(ErrorKind::Other, msg));
         }
     };
 
-    let status = Command::new(dlltool)
-        .arg("--input-def")
-        .arg(defpath)
-        .arg("--output-lib")
-        .arg(libpath)
-        .status()?;
+    // Run the selected `dlltool` executable to generate the import library.
+    let status = build_dlltool_command(dlltool, arch, &defpath, out_dir).status()?;
 
     if status.success() {
         Ok(())
@@ -133,6 +134,45 @@ pub fn generate_implib_for_target(out_dir: &str, arch: &str, env: &str) -> Resul
         let msg = format!("{dlltool} failed with {status}");
         Err(Error::new(ErrorKind::Other, msg))
     }
+}
+
+/// Generates the complete `dlltool` executable invocation command.
+///
+/// Supports both LLVM and MinGW `dlltool` flavors.
+fn build_dlltool_command(dlltool: &str, arch: &str, defpath: &Path, out_dir: &str) -> Command {
+    let mut libpath = PathBuf::from(out_dir);
+    let mut command = Command::new(dlltool);
+
+    // Check whether we are using LLVM `dlltool` or MinGW `dlltool`.
+    if dlltool == DLLTOOL_MSVC {
+        libpath.push(IMPLIB_FILE_MSVC);
+
+        // LLVM tools use their own target architecture names...
+        let machine = match arch {
+            "x86_64" => "i386:x86-64",
+            "x86" => "i386",
+            "aarch64" => "arm64",
+            _ => arch,
+        };
+
+        command
+            .arg("-m")
+            .arg(machine)
+            .arg("-d")
+            .arg(defpath)
+            .arg("-l")
+            .arg(libpath);
+    } else {
+        libpath.push(IMPLIB_FILE_GNU);
+
+        command
+            .arg("--input-def")
+            .arg(defpath)
+            .arg("--output-lib")
+            .arg(libpath);
+    }
+
+    command
 }
 
 /// Generates `python3.dll` import library directly from the embedded
