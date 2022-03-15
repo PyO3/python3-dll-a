@@ -248,13 +248,58 @@ mod tests {
 
     #[test]
     fn generate() {
-        // FIXME: Use "target/test" dir for temporary files.
+        // FIXME: Use "target/<arch>" dirs for temporary files.
         let mut dir = PathBuf::from(env!("CARGO_MANIFEST_DIR"));
         dir.push("target");
-        dir.push("test");
+        dir.push("x86_64-pc-windows-gnu");
+        dir.push("python3-dll");
 
         let out_dir = dir.to_str().unwrap();
         generate_implib(out_dir).unwrap();
+    }
+
+    #[test]
+    fn generate_gnu32() {
+        let mut dir = PathBuf::from(env!("CARGO_MANIFEST_DIR"));
+        dir.push("target");
+        dir.push("i686-pc-windows-gnu");
+        dir.push("python3-dll");
+
+        let out_dir = dir.to_str().unwrap();
+        generate_implib_for_target(out_dir, "x86", "gnu").unwrap();
+    }
+
+    #[test]
+    fn generate_msvc() {
+        let mut dir = PathBuf::from(env!("CARGO_MANIFEST_DIR"));
+        dir.push("target");
+        dir.push("x86_64-pc-windows-msvc");
+        dir.push("python3-dll");
+
+        let out_dir = dir.to_str().unwrap();
+        generate_implib_for_target(out_dir, "x86_64", "msvc").unwrap();
+    }
+
+    #[test]
+    fn generate_msvc32() {
+        let mut dir = PathBuf::from(env!("CARGO_MANIFEST_DIR"));
+        dir.push("target");
+        dir.push("i686-pc-windows-msvc");
+        dir.push("python3-dll");
+
+        let out_dir = dir.to_str().unwrap();
+        generate_implib_for_target(out_dir, "x86", "msvc").unwrap();
+    }
+
+    #[test]
+    fn generate_msvc_arm64() {
+        let mut dir = PathBuf::from(env!("CARGO_MANIFEST_DIR"));
+        dir.push("target");
+        dir.push("aarch64-pc-windows-msvc");
+        dir.push("python3-dll");
+
+        let out_dir = dir.to_str().unwrap();
+        generate_implib_for_target(out_dir, "aarch64", "msvc").unwrap();
     }
 
     #[test]
