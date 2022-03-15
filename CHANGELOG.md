@@ -2,6 +2,20 @@
 
 All notable changes to this project will be documented in this file.
 
+## [0.1.2] - 2022-03-15
+
+### Documentation
+
+- Document MSVC ABI environment support
+
+### Features
+
+- Add support for the LLVM `dlltool` flavor
+
+### Testing
+
+- Build import libraries for all targets
+
 ## [0.1.1] - 2022-03-14
 
 ### Documentation
