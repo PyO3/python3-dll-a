@@ -2,6 +2,12 @@
 
 All notable changes to this project will be documented in this file.
 
+## [0.2.0] - 2022-03-21
+
+### Features
+
+- [**breaking**] Use `Path` type for the output directory arg
+
 ## [0.1.2] - 2022-03-15
 
 ### Documentation
