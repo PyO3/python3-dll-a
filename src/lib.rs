@@ -17,39 +17,28 @@
 //! Example `build.rs` script
 //! -------------------------
 //!
-//! The following script can be used to cross-compile Stable ABI
-//! PyO3 extension modules for Windows (64-bit MinGW-w64):
-//!
-//! ```no_run
-//! fn main() {
-//!     if std::env::var("TARGET").unwrap() == "x86_64-pc-windows-gnu" {
-//!         let libdir = std::env::var("PYO3_CROSS_LIB_DIR")
-//!             .expect("PYO3_CROSS_LIB_DIR is not set when cross-compiling");
-//!         python3_dll_a::generate_implib(&libdir)
-//!             .expect("python3.dll import library generator failed");
-//!     }
-//! }
-//! ```
-//!
-//! A compatible `python3.dll` import library will be automatically created in
-//! the directory pointed by `PYO3_CROSS_LIB_DIR` environment variable.
-//!
-//! If both 64-bit and 32-bit or GNU and MSVC ABI (cross-)compile target
-//! support is needed, the more generic `generate_implib_for_target()`
-//! function must be used:
+//! The following Cargo build script can be used to cross-compile Stable ABI
+//! PyO3 extension modules for Windows (64/32-bit x86 or 64-bit ARM)
+//! using either MinGW-w64 or MSVC target environment ABI:
 //!
 //! ```no_run
 //! fn main() {
 //!     if std::env::var("CARGO_CFG_TARGET_OS").unwrap() == "windows" {
-//!         let libdir = std::env::var("PYO3_CROSS_LIB_DIR")
+//!         let cross_lib_dir = std::env::var_os("PYO3_CROSS_LIB_DIR")
 //!             .expect("PYO3_CROSS_LIB_DIR is not set when cross-compiling");
 //!         let arch = std::env::var("CARGO_CFG_TARGET_ARCH").unwrap();
 //!         let env = std::env::var("CARGO_CFG_TARGET_ENV").unwrap();
-//!         python3_dll_a::generate_implib_for_target(&libdir, &arch, &env)
+//!
+//!         let libdir = std::path::Path::new(&cross_lib_dir);
+//!         python3_dll_a::generate_implib_for_target(libdir, &arch, &env)
 //!             .expect("python3.dll import library generator failed");
 //!     }
 //! }
 //! ```
+//!
+//! A compatible `python3.dll` import library file named `python3.dll.a`
+//! or `python3.lib` will be automatically created in the directory
+//! pointed by the `PYO3_CROSS_LIB_DIR` environment variable.
 //!
 //! Example `cargo build` invocation
 //! --------------------------------
@@ -64,7 +53,7 @@
 use std::fs::create_dir_all;
 use std::fs::File;
 use std::io::{BufWriter, Error, ErrorKind, Result, Write};
-use std::path::{Path, PathBuf};
+use std::path::Path;
 use std::process::Command;
 
 /// Stable ABI Python DLL file name
@@ -96,7 +85,7 @@ const STABLE_ABI_DEFS: &str = include_str!("../Misc/stable_abi.txt");
 /// Generates `python3.dll` import library directly from the embedded
 /// Python Stable ABI definitions data for the specified compile target.
 ///
-/// The import library file named `python3.dll.a` is created
+/// The import library file named `python3.dll.a` or `python3.lib` is created
 /// in directory `out_dir`.
 ///
 /// The compile target architecture name (as in `CARGO_CFG_TARGET_ARCH`)
@@ -104,10 +93,10 @@ const STABLE_ABI_DEFS: &str = include_str!("../Misc/stable_abi.txt");
 ///
 /// The compile target environment ABI name (as in `CARGO_CFG_TARGET_ENV`)
 /// is passed in `env`.
-pub fn generate_implib_for_target(out_dir: &str, arch: &str, env: &str) -> Result<()> {
+pub fn generate_implib_for_target(out_dir: &Path, arch: &str, env: &str) -> Result<()> {
     create_dir_all(out_dir)?;
 
-    let mut defpath = PathBuf::from(out_dir);
+    let mut defpath = out_dir.to_owned();
     defpath.push(DEF_FILE);
 
     let stable_abi_exports = parse_stable_abi_defs(STABLE_ABI_DEFS);
@@ -144,8 +133,8 @@ pub fn generate_implib_for_target(out_dir: &str, arch: &str, env: &str) -> Resul
 /// Generates the complete `dlltool` executable invocation command.
 ///
 /// Supports both LLVM and MinGW `dlltool` flavors.
-fn build_dlltool_command(dlltool: &str, arch: &str, defpath: &Path, out_dir: &str) -> Command {
-    let mut libpath = PathBuf::from(out_dir);
+fn build_dlltool_command(dlltool: &str, arch: &str, defpath: &Path, out_dir: &Path) -> Command {
+    let mut libpath = out_dir.to_owned();
     let mut command = Command::new(dlltool);
 
     // Check whether we are using LLVM `dlltool` or MinGW `dlltool`.
@@ -178,19 +167,6 @@ fn build_dlltool_command(dlltool: &str, arch: &str, defpath: &Path, out_dir: &st
     }
 
     command
-}
-
-/// Generates `python3.dll` import library directly from the embedded
-/// Python Stable ABI definitions data for the default 64-bit MinGW-w64
-/// compile target.
-///
-/// The import library file named `python3.dll.a` is created
-/// in directory `out_dir`.
-///
-/// The import library is generated for the default `x86_64-pc-windows-gnu`
-/// cross-compile target.
-pub fn generate_implib(out_dir: &str) -> Result<()> {
-    generate_implib_for_target(out_dir, "x86_64", "gnu")
 }
 
 /// Exported DLL symbol definition
@@ -249,6 +225,8 @@ fn write_export_defs(writer: &mut impl Write, dll_name: &str, exports: &[DllExpo
 
 #[cfg(test)]
 mod tests {
+    use std::path::PathBuf;
+
     use super::*;
 
     #[test]
@@ -259,8 +237,7 @@ mod tests {
         dir.push("x86_64-pc-windows-gnu");
         dir.push("python3-dll");
 
-        let out_dir = dir.to_str().unwrap();
-        generate_implib(out_dir).unwrap();
+        generate_implib_for_target(&dir, "x86_64", "gnu").unwrap();
     }
 
     #[test]
@@ -270,8 +247,7 @@ mod tests {
         dir.push("i686-pc-windows-gnu");
         dir.push("python3-dll");
 
-        let out_dir = dir.to_str().unwrap();
-        generate_implib_for_target(out_dir, "x86", "gnu").unwrap();
+        generate_implib_for_target(&dir, "x86", "gnu").unwrap();
     }
 
     #[test]
@@ -281,8 +257,7 @@ mod tests {
         dir.push("x86_64-pc-windows-msvc");
         dir.push("python3-dll");
 
-        let out_dir = dir.to_str().unwrap();
-        generate_implib_for_target(out_dir, "x86_64", "msvc").unwrap();
+        generate_implib_for_target(&dir, "x86_64", "msvc").unwrap();
     }
 
     #[test]
@@ -292,8 +267,7 @@ mod tests {
         dir.push("i686-pc-windows-msvc");
         dir.push("python3-dll");
 
-        let out_dir = dir.to_str().unwrap();
-        generate_implib_for_target(out_dir, "x86", "msvc").unwrap();
+        generate_implib_for_target(&dir, "x86", "msvc").unwrap();
     }
 
     #[test]
@@ -303,8 +277,7 @@ mod tests {
         dir.push("aarch64-pc-windows-msvc");
         dir.push("python3-dll");
 
-        let out_dir = dir.to_str().unwrap();
-        generate_implib_for_target(out_dir, "aarch64", "msvc").unwrap();
+        generate_implib_for_target(&dir, "aarch64", "msvc").unwrap();
     }
 
     #[test]

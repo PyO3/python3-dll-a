@@ -17,40 +17,28 @@ to be present in `PATH` when targeting `*-pc-windows-msvc`.
 Example `build.rs` script
 -------------------------
 
-The following script can be used to cross-compile Stable ABI
-PyO3 extension modules for Windows (64-bit MinGW-w64):
-
-```rust
-fn main() {
-    if std::env::var("TARGET").unwrap() == "x86_64-pc-windows-gnu" {
-        let libdir = std::env::var("PYO3_CROSS_LIB_DIR")
-            .expect("PYO3_CROSS_LIB_DIR is not set when cross-compiling");
-        python3_dll_a::generate_implib(&libdir)
-            .expect("python3.dll import library generator failed");
-    }
-}
-```
-
-A compatible `python3.dll` import library will be automatically created in
-the directory pointed by `PYO3_CROSS_LIB_DIR` environment variable.
-
-If both 64-bit and 32-bit or GNU and MSVC ABI (cross-)compile target
-support is needed, the more generic `generate_implib_for_target()`
-function must be used:
-
+The following Cargo build script can be used to cross-compile Stable ABI
+PyO3 extension modules for Windows (64/32-bit x86 or 64-bit ARM)
+using either MinGW-w64 or MSVC target environment ABI:
 
 ```rust
 fn main() {
     if std::env::var("CARGO_CFG_TARGET_OS").unwrap() == "windows" {
-        let libdir = std::env::var("PYO3_CROSS_LIB_DIR")
+        let cross_lib_dir = std::env::var_os("PYO3_CROSS_LIB_DIR")
             .expect("PYO3_CROSS_LIB_DIR is not set when cross-compiling");
         let arch = std::env::var("CARGO_CFG_TARGET_ARCH").unwrap();
         let env = std::env::var("CARGO_CFG_TARGET_ENV").unwrap();
-        python3_dll_a::generate_implib_for_target(&libdir, &arch, &env)
+
+        let libdir = std::path::Path::new(&cross_lib_dir);
+        python3_dll_a::generate_implib_for_target(libdir, &arch, &env)
             .expect("python3.dll import library generator failed");
     }
 }
 ```
+
+A compatible `python3.dll` import library file named `python3.dll.a`
+or `python3.lib` will be automatically created in the directory
+pointed by the `PYO3_CROSS_LIB_DIR` environment variable.
 
 Example `cargo build` invocation
 --------------------------------
