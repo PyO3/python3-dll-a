@@ -71,3 +71,16 @@ pointed by the `PYO3_CROSS_LIB_DIR` environment variable.
 ```sh
 PYO3_CROSS_LIB_DIR=target/python3-dll cargo build --target x86_64-pc-windows-gnu
 ```
+
+Maintenance
+-----------
+
+This crate embeds the `stable_abi.txt` definitions file from CPython
+in the `Misc` subdirectory.
+
+The upstream version of this file is located in the [CPython project][cpython]
+repository under the same path.
+This file should be updated for every subsequent CPython release
+(e.g. for CPython 3.12).
+
+[cpython]: https://github.com/python/cpython/blob/main/Misc/stable_abi.txt
