@@ -306,11 +306,6 @@ mod tests {
     }
 
     #[test]
-    fn abi_defs_len() {
-        assert_eq!(STABLE_ABI_DEFS.len(), 48836);
-    }
-
-    #[test]
     fn parse_stable_abi_txt() {
         let stable_abi_exports = parse_stable_abi_defs(STABLE_ABI_DEFS);
 
