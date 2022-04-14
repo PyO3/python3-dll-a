@@ -14,10 +14,36 @@
 //! More specifically, `python3-dll-a` requires `llvm-dlltool` executable
 //! to be present in `PATH` when targeting `*-pc-windows-msvc`.
 //!
-//! Example `build.rs` script
-//! -------------------------
+//! PyO3 integration
+//! ----------------
 //!
-//! The following Cargo build script can be used to cross-compile Stable ABI
+//! Since version **0.16.4**, the `pyo3` crate implements support
+//! for the Stable ABI Python DLL import library generation via
+//! its new `generate-abi3-import-lib` feature.
+//!
+//! In this configuration, `python3-dll-a` becomes a `pyo3` crate dependency
+//! and is automatically invoked by its build script in both native
+//! and cross compilation scenarios.
+//!
+//! ### Example `Cargo.toml` usage for a PyO3 extension module
+//!
+//! ```toml
+//! [dependencies]
+//! pyo3 = { version = "0.16.4", features = ["extension-module", "abi3-py37", "generate-abi3-import-lib"] }
+//! ```
+//!
+//! Standalone build script usage
+//! -----------------------------
+//!
+//! If an older `pyo3` crate version is used, or a different Python bindings
+//! library is required, `python3-dll-a` can be used directly
+//! from the crate build script.
+//!
+//! The examples below assume using an older version of PyO3.
+//!
+//! ### Example `build.rs` script
+//!
+//! The following cargo build script can be used to cross-compile Stable ABI
 //! PyO3 extension modules for Windows (64/32-bit x86 or 64-bit ARM)
 //! using either MinGW-w64 or MSVC target environment ABI:
 //!
@@ -40,8 +66,7 @@
 //! or `python3.lib` will be automatically created in the directory
 //! pointed by the `PYO3_CROSS_LIB_DIR` environment variable.
 //!
-//! Example `cargo build` invocation
-//! --------------------------------
+//! ### Example `cargo build` invocation
 //!
 //! ```sh
 //! PYO3_CROSS_LIB_DIR=target/python3-dll cargo build --target x86_64-pc-windows-gnu
