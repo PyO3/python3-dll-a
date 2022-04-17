@@ -2,6 +2,26 @@
 
 All notable changes to this project will be documented in this file.
 
+## [0.2.1] - 2022-04-17
+
+### Features
+
+- Add support for `lib.exe` from MSVC when running on Windows in [#2](https://github.com/ravenexp/python3-dll-a/pull/2)
+
+### Documentation
+
+- Mention the new PyO3 integration feature
+- Add maintenance section to README
+
+### Miscellaneous Tasks
+
+- Update stable_abi.txt to the latest main
+
+### CI
+
+- Add `rust.yml` workflow to build and run unit tests
+- Add `publish.yml` workflow to publish the crate to `crates.io`
+
 ## [0.2.0] - 2022-03-21
 
 ### Features

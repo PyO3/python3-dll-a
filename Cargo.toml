@@ -1,10 +1,10 @@
 [package]
 name = "python3-dll-a"
-version = "0.2.0"
+version = "0.2.1"
 edition = "2021"
 description = "Standalone python3.dll import library generator"
 repository = "https://github.com/ravenexp/python3-dll-a"
-authors = ["Sergey Kvachonok <ravenexp@gmail.com>"]
+authors = ["Sergey Kvachonok <ravenexp@gmail.com>", "messense <messense@icloud.com>"]
 license = "MIT AND PSF-2.0"
 keywords = ["build-dependencies", "python", "windows", "mingw"]
 categories = ["development-tools::build-utils"]
