@@ -9,3 +9,6 @@ license = "MIT AND PSF-2.0"
 keywords = ["build-dependencies", "python", "windows", "mingw"]
 categories = ["development-tools::build-utils"]
 readme = "README.md"
+
+[target.'cfg(windows)'.dependencies]
+cc = "1.0.73"

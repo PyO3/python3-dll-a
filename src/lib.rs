@@ -102,6 +102,9 @@ const DLLTOOL_GNU_32: &str = "i686-w64-mingw32-dlltool";
 /// Canonical `dlltool` program name for the MSVC environment ABI (LLVM dlltool)
 const DLLTOOL_MSVC: &str = "llvm-dlltool";
 
+/// Canonical `lib` program name for the MSVC environment ABI (MSVC lib.exe)
+const LIB_MSVC: &str = "lib.exe";
+
 /// Python Stable ABI symbol defs from the CPython repository
 ///
 /// Upstream source: <https://github.com/python/cpython/blob/main/Misc/stable_abi.txt>
@@ -131,13 +134,19 @@ pub fn generate_implib_for_target(out_dir: &Path, arch: &str, env: &str) -> Resu
     drop(writer);
 
     // Try to guess the `dlltool` executable name from the target triple.
-    let dlltool = match (arch, env) {
+    let (command, dlltool) = match (arch, env) {
         // 64-bit MinGW-w64 (aka x86_64-pc-windows-gnu)
-        ("x86_64", "gnu") => DLLTOOL_GNU,
+        ("x86_64", "gnu") => (Command::new(DLLTOOL_GNU), DLLTOOL_GNU),
         // 32-bit MinGW-w64 (aka i686-pc-windows-gnu)
-        ("x86", "gnu") => DLLTOOL_GNU_32,
+        ("x86", "gnu") => (Command::new(DLLTOOL_GNU_32), DLLTOOL_GNU_32),
         // MSVC ABI (multiarch)
-        (_, "msvc") => DLLTOOL_MSVC,
+        (_, "msvc") => {
+            if let Some(command) = find_lib_exe(arch) {
+                (command, LIB_MSVC)
+            } else {
+                (Command::new(DLLTOOL_MSVC), DLLTOOL_MSVC)
+            }
+        }
         _ => {
             let msg = format!("Unsupported target arch '{arch}' or env ABI '{env}'");
             return Err(Error::new(ErrorKind::Other, msg));
@@ -145,7 +154,7 @@ pub fn generate_implib_for_target(out_dir: &Path, arch: &str, env: &str) -> Resu
     };
 
     // Run the selected `dlltool` executable to generate the import library.
-    let status = build_dlltool_command(dlltool, arch, &defpath, out_dir).status()?;
+    let status = build_dlltool_command(command, dlltool, arch, &defpath, out_dir).status()?;
 
     if status.success() {
         Ok(())
@@ -155,12 +164,34 @@ pub fn generate_implib_for_target(out_dir: &Path, arch: &str, env: &str) -> Resu
     }
 }
 
+/// Find Visual Studio lib.exe on Windows
+#[cfg(windows)]
+fn find_lib_exe(arch: &str) -> Option<Command> {
+    let target = match arch {
+        "x86_64" => "x86_64-pc-windows-msvc",
+        "x86" => "i686-pc-windows-msvc",
+        "aarch64" => "aarch64-pc-windows-msvc",
+        _ => return None,
+    };
+    cc::windows_registry::find(target, LIB_MSVC)
+}
+
+#[cfg(not(windows))]
+fn find_lib_exe(_arch: &str) -> Option<Command> {
+    None
+}
+
 /// Generates the complete `dlltool` executable invocation command.
 ///
-/// Supports both LLVM and MinGW `dlltool` flavors.
-fn build_dlltool_command(dlltool: &str, arch: &str, defpath: &Path, out_dir: &Path) -> Command {
+/// Supports Visual Studio `lib.exe`, LLVM and MinGW `dlltool` flavors.
+fn build_dlltool_command(
+    mut command: Command,
+    dlltool: &str,
+    arch: &str,
+    defpath: &Path,
+    out_dir: &Path,
+) -> Command {
     let mut libpath = out_dir.to_owned();
-    let mut command = Command::new(dlltool);
 
     // Check whether we are using LLVM `dlltool` or MinGW `dlltool`.
     if dlltool == DLLTOOL_MSVC {
@@ -181,6 +212,20 @@ fn build_dlltool_command(dlltool: &str, arch: &str, defpath: &Path, out_dir: &Pa
             .arg(defpath)
             .arg("-l")
             .arg(libpath);
+    } else if dlltool == LIB_MSVC {
+        libpath.push(IMPLIB_FILE_MSVC);
+
+        // lib.exe use their own target architecure names...
+        let machine = match arch {
+            "x86_64" => "X64",
+            "x86" => "X86",
+            "aarch64" => "ARM64",
+            _ => arch,
+        };
+        command
+            .arg(format!("/MACHINE:{}", machine))
+            .arg(format!("/DEF:{}", defpath.display()))
+            .arg(format!("/OUT:{}", libpath.display()));
     } else {
         libpath.push(IMPLIB_FILE_GNU);
 
@@ -254,6 +299,7 @@ mod tests {
 
     use super::*;
 
+    #[cfg(unix)]
     #[test]
     fn generate() {
         // FIXME: Use "target/<arch>" dirs for temporary files.
@@ -265,6 +311,7 @@ mod tests {
         generate_implib_for_target(&dir, "x86_64", "gnu").unwrap();
     }
 
+    #[cfg(unix)]
     #[test]
     fn generate_gnu32() {
         let mut dir = PathBuf::from(env!("CARGO_MANIFEST_DIR"));
