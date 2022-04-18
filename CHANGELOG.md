@@ -6,7 +6,7 @@ All notable changes to this project will be documented in this file.
 
 ### Features
 
-- Add support for `lib.exe` from MSVC when running on Windows in [#2](https://github.com/ravenexp/python3-dll-a/pull/2)
+- Add support for `lib.exe` from MSVC when running on Windows in [#2](https://github.com/pyo3/python3-dll-a/pull/2)
 
 ### Documentation
 
