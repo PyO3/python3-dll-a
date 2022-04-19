@@ -1,0 +1,26 @@
+name: Update stable_abi.txt
+
+on:
+  workflow_dispatch:
+  schedule:
+    # Run every week
+    - cron: '0 0 * * 0'
+
+jobs:
+  update:
+    name: Update stable_abi.txt
+    runs-on: ubuntu-latest
+    steps:
+    - uses: actions/checkout@v3
+    - name: Fetch latest stable_abi.txt
+      run: |
+        curl https://raw.githubusercontent.com/python/cpython/main/Misc/stable_abi.txt > Misc/stable_abi.txt
+    - name: Create Pull Request
+      uses: peter-evans/create-pull-request@v4
+      with:
+        delete-branch: true
+        add-paths: |
+          Misc/stable_abi.txt
+        title: 'Update stable_abi.txt to the latest main'
+        commit-message: 'chore: Update stable_abi.txt to the latest main'
+        body: 'Source: https://raw.githubusercontent.com/python/cpython/main/Misc/stable_abi.txt'
