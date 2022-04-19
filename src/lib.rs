@@ -356,7 +356,7 @@ mod tests {
     fn parse_stable_abi_txt() {
         let stable_abi_exports = parse_stable_abi_defs(STABLE_ABI_DEFS);
 
-        assert_eq!(stable_abi_exports.len(), 859);
+        assert!(stable_abi_exports.len() >= 859);
         // assert_eq!(stable_abi_exports.capacity(), 1526);
 
         let data_sym_num = stable_abi_exports.iter().filter(|x| x.is_data).count();
