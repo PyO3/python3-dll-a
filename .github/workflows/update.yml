@@ -1,4 +1,4 @@
-name: Update stable_abi.txt
+name: Update stable_abi.toml
 
 on:
   workflow_dispatch:
@@ -8,19 +8,26 @@ on:
 
 jobs:
   update:
-    name: Update stable_abi.txt
+    name: Update stable_abi.toml
     runs-on: ubuntu-latest
     steps:
     - uses: actions/checkout@v3
-    - name: Fetch latest stable_abi.txt
+    - name: Fetch latest stable_abi.toml
       run: |
-        curl https://raw.githubusercontent.com/python/cpython/main/Misc/stable_abi.txt > Misc/stable_abi.txt
+        curl https://raw.githubusercontent.com/python/cpython/main/Misc/stable_abi.toml > stable_abi.toml
+    - name: Install Python TOML parser
+      run: |
+        sudo apt-get install --yes python3-pip
+        pip install tomli
+    - name: Parse stable_abi.toml to produce python3.def
+      run: |
+        ./parse-stable-abi.py < stable_abi.toml > src/python3.def
     - name: Create Pull Request
       uses: peter-evans/create-pull-request@v4
       with:
         delete-branch: true
         add-paths: |
-          Misc/stable_abi.txt
-        title: 'Update stable_abi.txt to the latest main'
-        commit-message: 'chore: Update stable_abi.txt to the latest main'
-        body: 'Source: https://raw.githubusercontent.com/python/cpython/main/Misc/stable_abi.txt'
+          src/python3.def
+        title: 'Update python3.def using stable_abi.toml from the latest main'
+        commit-message: 'chore: Update python3.def using stable_abi.toml from the latest main'
+        body: 'Source: https://raw.githubusercontent.com/python/cpython/main/Misc/stable_abi.toml'

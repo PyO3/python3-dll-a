@@ -75,17 +75,16 @@
 #![deny(missing_docs)]
 #![allow(clippy::needless_doctest_main)]
 
-use std::fs::create_dir_all;
-use std::fs::File;
-use std::io::{BufWriter, Error, ErrorKind, Result, Write};
+use std::fs::{create_dir_all, write};
+use std::io::{Error, ErrorKind, Result};
 use std::path::Path;
 use std::process::Command;
 
-/// Stable ABI Python DLL file name
-const DLL_FILE: &str = "python3.dll";
-
 /// Module-Definition file name for `python3.dll`
 const DEF_FILE: &str = "python3.def";
+
+/// Module-Definition file content for `python3.dll`
+const DEF_FILE_CONTENT: &[u8] = include_bytes!("python3.def");
 
 /// Canonical `python3.dll` import library file name for the GNU environment ABI (MinGW-w64)
 const IMPLIB_FILE_GNU: &str = "python3.dll.a";
@@ -105,11 +104,6 @@ const DLLTOOL_MSVC: &str = "llvm-dlltool";
 /// Canonical `lib` program name for the MSVC environment ABI (MSVC lib.exe)
 const LIB_MSVC: &str = "lib.exe";
 
-/// Python Stable ABI symbol defs from the CPython repository
-///
-/// Upstream source: <https://github.com/python/cpython/blob/main/Misc/stable_abi.txt>
-const STABLE_ABI_DEFS: &str = include_str!("../Misc/stable_abi.txt");
-
 /// Generates `python3.dll` import library directly from the embedded
 /// Python Stable ABI definitions data for the specified compile target.
 ///
@@ -127,11 +121,7 @@ pub fn generate_implib_for_target(out_dir: &Path, arch: &str, env: &str) -> Resu
     let mut defpath = out_dir.to_owned();
     defpath.push(DEF_FILE);
 
-    let stable_abi_exports = parse_stable_abi_defs(STABLE_ABI_DEFS);
-
-    let mut writer = BufWriter::new(File::create(&defpath)?);
-    write_export_defs(&mut writer, DLL_FILE, &stable_abi_exports)?;
-    drop(writer);
+    write(&defpath, DEF_FILE_CONTENT)?;
 
     // Try to guess the `dlltool` executable name from the target triple.
     let (command, dlltool) = match (arch, env) {
@@ -239,60 +229,6 @@ fn build_dlltool_command(
     command
 }
 
-/// Exported DLL symbol definition
-struct DllExport {
-    /// Export symbol name
-    symbol: String,
-    /// Data symbol flag
-    is_data: bool,
-}
-
-/// Parses 'stable_abi.txt' export symbol definitions
-fn parse_stable_abi_defs(defs: &str) -> Vec<DllExport> {
-    // Try to estimate the number of records from the file size.
-    let mut exports = Vec::with_capacity(defs.len() / 32);
-
-    for line in defs.lines() {
-        let is_data = if line.starts_with("function") {
-            false
-        } else if line.starts_with("data") {
-            true
-        } else {
-            // Skip everything but "function" and "data" entries.
-            continue;
-        };
-
-        // Parse "function|data PyFoo"-like strings.
-        if let Some(name) = line.split_ascii_whitespace().nth(1) {
-            let symbol = name.to_owned();
-            exports.push(DllExport { symbol, is_data })
-        }
-    }
-
-    exports
-}
-
-/// Writes Module-Definition file export statements.
-///
-/// The library module name is passed in `dll_name`,
-/// the list of exported symbols - in `exports`.
-///
-/// See <https://docs.microsoft.com/en-us/cpp/build/reference/module-definition-dot-def-files>.
-fn write_export_defs(writer: &mut impl Write, dll_name: &str, exports: &[DllExport]) -> Result<()> {
-    writeln!(writer, "LIBRARY \"{dll_name}\"")?;
-    writeln!(writer, "EXPORTS")?;
-
-    for e in exports {
-        if e.is_data {
-            writeln!(writer, "{} DATA", e.symbol)?;
-        } else {
-            writeln!(writer, "{}", e.symbol)?;
-        }
-    }
-
-    Ok(())
-}
-
 #[cfg(test)]
 mod tests {
     use std::path::PathBuf;
@@ -350,43 +286,5 @@ mod tests {
         dir.push("python3-dll");
 
         generate_implib_for_target(&dir, "aarch64", "msvc").unwrap();
-    }
-
-    #[test]
-    fn parse_stable_abi_txt() {
-        let stable_abi_exports = parse_stable_abi_defs(STABLE_ABI_DEFS);
-
-        assert!(stable_abi_exports.len() >= 859);
-        // assert_eq!(stable_abi_exports.capacity(), 1526);
-
-        let data_sym_num = stable_abi_exports.iter().filter(|x| x.is_data).count();
-        assert_eq!(data_sym_num, 143);
-
-        assert_eq!(stable_abi_exports[0].symbol, "PyType_FromSpec");
-        assert!(!stable_abi_exports[0].is_data);
-
-        assert_eq!(stable_abi_exports[200].symbol, "PyExc_UnicodeDecodeError");
-        assert!(stable_abi_exports[200].is_data);
-    }
-
-    #[test]
-    fn write_exports() {
-        let function = DllExport {
-            symbol: "foo".to_owned(),
-            is_data: false,
-        };
-        let data = DllExport {
-            symbol: "buf".to_owned(),
-            is_data: true,
-        };
-        let exports = vec![function, data];
-
-        let mut writer = Vec::new();
-        write_export_defs(&mut writer, DLL_FILE, &exports).unwrap();
-
-        assert_eq!(
-            String::from_utf8(writer).unwrap(),
-            "LIBRARY \"python3.dll\"\nEXPORTS\nfoo\nbuf DATA\n"
-        );
     }
 }

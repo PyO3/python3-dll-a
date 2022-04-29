@@ -75,12 +75,11 @@ PYO3_CROSS_LIB_DIR=target/python3-dll cargo build --target x86_64-pc-windows-gnu
 Maintenance
 -----------
 
-This crate embeds the `stable_abi.txt` definitions file from CPython
-in the `Misc` subdirectory.
+This crate embeds Module-Defitions based on the `stable_abi.toml` file from CPython.
 
 The upstream version of this file is located in the [CPython project][cpython]
-repository under the same path.
+repository under the path `Misc/stable_abi.toml`.
 This file should be updated for every subsequent CPython release
 (e.g. for CPython 3.12).
 
-[cpython]: https://github.com/python/cpython/blob/main/Misc/stable_abi.txt
+[cpython]: https://github.com/python/cpython/blob/main/Misc/stable_abi.toml
