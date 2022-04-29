@@ -8,18 +8,13 @@ PyArg_UnpackTuple
 PyArg_VaParse
 PyArg_VaParseTupleAndKeywords
 PyArg_ValidateKeywordArguments
-PyBaseObject_Type DATA
 PyBool_FromLong
-PyBool_Type DATA
-PyByteArrayIter_Type DATA
 PyByteArray_AsString
 PyByteArray_Concat
 PyByteArray_FromObject
 PyByteArray_FromStringAndSize
 PyByteArray_Resize
 PyByteArray_Size
-PyByteArray_Type DATA
-PyBytesIter_Type DATA
 PyBytes_AsString
 PyBytes_AsStringAndSize
 PyBytes_Concat
@@ -32,15 +27,12 @@ PyBytes_FromString
 PyBytes_FromStringAndSize
 PyBytes_Repr
 PyBytes_Size
-PyBytes_Type DATA
 PyCFunction_Call
 PyCFunction_GetFlags
 PyCFunction_GetFunction
 PyCFunction_GetSelf
 PyCFunction_NewEx
-PyCFunction_Type DATA
 PyCallIter_New
-PyCallIter_Type DATA
 PyCallable_Check
 PyCapsule_GetContext
 PyCapsule_GetDestructor
@@ -53,8 +45,6 @@ PyCapsule_SetContext
 PyCapsule_SetDestructor
 PyCapsule_SetName
 PyCapsule_SetPointer
-PyCapsule_Type DATA
-PyClassMethodDescr_Type DATA
 PyCodec_BackslashReplaceErrors
 PyCodec_Decode
 PyCodec_Decoder
@@ -75,19 +65,11 @@ PyCodec_XMLCharRefReplaceErrors
 PyComplex_FromDoubles
 PyComplex_ImagAsDouble
 PyComplex_RealAsDouble
-PyComplex_Type DATA
 PyDescr_NewClassMethod
 PyDescr_NewGetSet
 PyDescr_NewMember
 PyDescr_NewMethod
-PyDictItems_Type DATA
-PyDictIterItem_Type DATA
-PyDictIterKey_Type DATA
-PyDictIterValue_Type DATA
-PyDictKeys_Type DATA
 PyDictProxy_New
-PyDictProxy_Type DATA
-PyDictValues_Type DATA
 PyDict_Clear
 PyDict_Contains
 PyDict_Copy
@@ -105,11 +87,8 @@ PyDict_Next
 PyDict_SetItem
 PyDict_SetItemString
 PyDict_Size
-PyDict_Type DATA
 PyDict_Update
 PyDict_Values
-PyEllipsis_Type DATA
-PyEnum_Type DATA
 PyErr_BadArgument
 PyErr_BadInternalCall
 PyErr_CheckSignals
@@ -161,54 +140,6 @@ PyEval_ReleaseThread
 PyEval_RestoreThread
 PyEval_SaveThread
 PyEval_ThreadsInitialized
-PyExc_ArithmeticError DATA
-PyExc_AssertionError DATA
-PyExc_AttributeError DATA
-PyExc_BaseException DATA
-PyExc_BaseExceptionGroup DATA
-PyExc_BufferError DATA
-PyExc_BytesWarning DATA
-PyExc_DeprecationWarning DATA
-PyExc_EOFError DATA
-PyExc_EnvironmentError DATA
-PyExc_Exception DATA
-PyExc_FloatingPointError DATA
-PyExc_FutureWarning DATA
-PyExc_GeneratorExit DATA
-PyExc_IOError DATA
-PyExc_ImportError DATA
-PyExc_ImportWarning DATA
-PyExc_IndentationError DATA
-PyExc_IndexError DATA
-PyExc_KeyError DATA
-PyExc_KeyboardInterrupt DATA
-PyExc_LookupError DATA
-PyExc_MemoryError DATA
-PyExc_NameError DATA
-PyExc_NotImplementedError DATA
-PyExc_OSError DATA
-PyExc_OverflowError DATA
-PyExc_PendingDeprecationWarning DATA
-PyExc_ReferenceError DATA
-PyExc_RuntimeError DATA
-PyExc_RuntimeWarning DATA
-PyExc_StopIteration DATA
-PyExc_SyntaxError DATA
-PyExc_SyntaxWarning DATA
-PyExc_SystemError DATA
-PyExc_SystemExit DATA
-PyExc_TabError DATA
-PyExc_TypeError DATA
-PyExc_UnboundLocalError DATA
-PyExc_UnicodeDecodeError DATA
-PyExc_UnicodeEncodeError DATA
-PyExc_UnicodeError DATA
-PyExc_UnicodeTranslateError DATA
-PyExc_UnicodeWarning DATA
-PyExc_UserWarning DATA
-PyExc_ValueError DATA
-PyExc_Warning DATA
-PyExc_ZeroDivisionError DATA
 PyException_GetCause
 PyException_GetContext
 PyException_GetTraceback
@@ -219,21 +150,17 @@ PyFile_FromFd
 PyFile_GetLine
 PyFile_WriteObject
 PyFile_WriteString
-PyFilter_Type DATA
 PyFloat_AsDouble
 PyFloat_FromDouble
 PyFloat_FromString
 PyFloat_GetInfo
 PyFloat_GetMax
 PyFloat_GetMin
-PyFloat_Type DATA
 PyFrozenSet_New
-PyFrozenSet_Type DATA
 PyGC_Collect
 PyGILState_Ensure
 PyGILState_GetThisThreadState
 PyGILState_Release
-PyGetSetDescr_Type DATA
 PyImport_AddModule
 PyImport_AppendInittab
 PyImport_ExecCodeModule
@@ -253,8 +180,6 @@ PyInterpreterState_Clear
 PyInterpreterState_Delete
 PyInterpreterState_New
 PyIter_Next
-PyListIter_Type DATA
-PyListRevIter_Type DATA
 PyList_Append
 PyList_AsTuple
 PyList_GetItem
@@ -266,8 +191,6 @@ PyList_SetItem
 PyList_SetSlice
 PyList_Size
 PyList_Sort
-PyList_Type DATA
-PyLongRangeIter_Type DATA
 PyLong_AsDouble
 PyLong_AsLong
 PyLong_AsLongAndOverflow
@@ -290,8 +213,6 @@ PyLong_FromUnsignedLong
 PyLong_FromUnsignedLongLong
 PyLong_FromVoidPtr
 PyLong_GetInfo
-PyLong_Type DATA
-PyMap_Type DATA
 PyMapping_Check
 PyMapping_GetItemString
 PyMapping_HasKey
@@ -305,11 +226,8 @@ PyMapping_Values
 PyMem_Free
 PyMem_Malloc
 PyMem_Realloc
-PyMemberDescr_Type DATA
 PyMemoryView_FromObject
 PyMemoryView_GetContiguous
-PyMemoryView_Type DATA
-PyMethodDescr_Type DATA
 PyModule_AddIntConstant
 PyModule_AddObject
 PyModule_AddStringConstant
@@ -321,7 +239,6 @@ PyModule_GetFilenameObject
 PyModule_GetName
 PyModule_GetState
 PyModule_New
-PyModule_Type DATA
 PyNumber_Absolute
 PyNumber_Add
 PyNumber_And
@@ -358,7 +275,6 @@ PyNumber_ToBase
 PyNumber_TrueDivide
 PyNumber_Xor
 PyOS_AfterFork
-PyOS_InputHook DATA
 PyOS_InterruptOccurred
 PyOS_double_to_string
 PyOS_getsig
@@ -417,12 +333,7 @@ PyObject_SetItem
 PyObject_Size
 PyObject_Str
 PyObject_Type
-PyProperty_Type DATA
-PyRangeIter_Type DATA
-PyRange_Type DATA
-PyReversed_Type DATA
 PySeqIter_New
-PySeqIter_Type DATA
 PySequence_Check
 PySequence_Concat
 PySequence_Contains
@@ -443,7 +354,6 @@ PySequence_SetItem
 PySequence_SetSlice
 PySequence_Size
 PySequence_Tuple
-PySetIter_Type DATA
 PySet_Add
 PySet_Clear
 PySet_Contains
@@ -451,17 +361,14 @@ PySet_Discard
 PySet_New
 PySet_Pop
 PySet_Size
-PySet_Type DATA
 PySlice_GetIndices
 PySlice_GetIndicesEx
 PySlice_New
-PySlice_Type DATA
 PyState_FindModule
 PyStructSequence_GetItem
 PyStructSequence_New
 PyStructSequence_NewType
 PyStructSequence_SetItem
-PySuper_Type DATA
 PySys_AddWarnOption
 PySys_AddWarnOptionUnicode
 PySys_FormatStderr
@@ -485,15 +392,12 @@ PyThreadState_SetAsyncExc
 PyThreadState_Swap
 PyTraceBack_Here
 PyTraceBack_Print
-PyTraceBack_Type DATA
-PyTupleIter_Type DATA
 PyTuple_GetItem
 PyTuple_GetSlice
 PyTuple_New
 PyTuple_Pack
 PyTuple_SetItem
 PyTuple_Size
-PyTuple_Type DATA
 PyType_ClearCache
 PyType_GenericAlloc
 PyType_GenericNew
@@ -501,7 +405,6 @@ PyType_GetFlags
 PyType_IsSubtype
 PyType_Modified
 PyType_Ready
-PyType_Type DATA
 PyUnicodeDecodeError_Create
 PyUnicodeDecodeError_GetEncoding
 PyUnicodeDecodeError_GetEnd
@@ -519,7 +422,6 @@ PyUnicodeEncodeError_GetStart
 PyUnicodeEncodeError_SetEnd
 PyUnicodeEncodeError_SetReason
 PyUnicodeEncodeError_SetStart
-PyUnicodeIter_Type DATA
 PyUnicodeTranslateError_GetEnd
 PyUnicodeTranslateError_GetObject
 PyUnicodeTranslateError_GetReason
@@ -595,13 +497,10 @@ PyUnicode_EncodeFSDefault
 PyUnicode_InternFromString
 PyUnicode_InternImmortal
 PyUnicode_InternInPlace
-PyUnicode_Type DATA
 PyWeakref_GetObject
 PyWeakref_NewProxy
 PyWeakref_NewRef
-PyWrapperDescr_Type DATA
 PyWrapper_New
-PyZip_Type DATA
 Py_AddPendingCall
 Py_AtExit
 Py_BuildValue
@@ -610,7 +509,6 @@ Py_DecRef
 Py_EndInterpreter
 Py_Exit
 Py_FatalError
-Py_FileSystemDefaultEncoding DATA
 Py_Finalize
 Py_GetBuildInfo
 Py_GetCompiler
@@ -624,7 +522,6 @@ Py_GetProgramName
 Py_GetPythonHome
 Py_GetRecursionLimit
 Py_GetVersion
-Py_HasFileSystemDefaultEncoding DATA
 Py_IncRef
 Py_Initialize
 Py_InitializeEx
@@ -649,18 +546,9 @@ _PyObject_NewVar
 _PyState_AddModule
 _PyThreadState_Init
 _PyThreadState_Prealloc
-_PyWeakref_CallableProxyType DATA
-_PyWeakref_ProxyType DATA
-_PyWeakref_RefType DATA
 _Py_BuildValue_SizeT
 _Py_CheckRecursiveCall
 _Py_Dealloc
-_Py_EllipsisObject DATA
-_Py_FalseStruct DATA
-_Py_NoneStruct DATA
-_Py_NotImplementedStruct DATA
-_Py_SwappedOp DATA
-_Py_TrueStruct DATA
 _Py_VaBuildValue_SizeT
 PyObject_AsCharBuffer
 PyObject_AsReadBuffer
@@ -701,36 +589,16 @@ PyCFunction_New
 PyType_GetSlot
 PyErr_FormatV
 PyModuleDef_Init
-PyModuleDef_Type DATA
 Py_FinalizeEx
 PyOS_FSPath
 PyErr_ResourceWarning
 PyErr_SetImportErrorSubclass
-PyExc_ModuleNotFoundError DATA
 PyCodec_NameReplaceErrors
 PyErr_GetExcInfo
 PyErr_SetExcInfo
 PyErr_SetFromErrnoWithFilenameObjects
 PyErr_SetImportError
 PyErr_SyntaxLocationEx
-PyExc_BlockingIOError DATA
-PyExc_BrokenPipeError DATA
-PyExc_ChildProcessError DATA
-PyExc_ConnectionAbortedError DATA
-PyExc_ConnectionError DATA
-PyExc_ConnectionRefusedError DATA
-PyExc_ConnectionResetError DATA
-PyExc_FileExistsError DATA
-PyExc_FileNotFoundError DATA
-PyExc_InterruptedError DATA
-PyExc_IsADirectoryError DATA
-PyExc_NotADirectoryError DATA
-PyExc_PermissionError DATA
-PyExc_ProcessLookupError DATA
-PyExc_RecursionError DATA
-PyExc_ResourceWarning DATA
-PyExc_StopAsyncIteration DATA
-PyExc_TimeoutError DATA
 PyImport_AddModuleObject
 PyImport_ExecCodeModuleObject
 PyImport_ImportFrozenModuleObject
@@ -769,7 +637,6 @@ PyErr_SetExcFromWindowsErrWithFilenameObject
 PyErr_SetExcFromWindowsErrWithFilenameObjects
 PyErr_SetFromWindowsErr
 PyErr_SetFromWindowsErrWithFilename
-PyExc_WindowsError DATA
 PyOS_CheckStack
 PyUnicode_AsMBCSString
 PyUnicode_DecodeCodePageStateful
@@ -790,19 +657,14 @@ PyOS_BeforeFork
 PyOS_AfterFork_Parent
 PyOS_AfterFork_Child
 PyImport_GetModule
-Py_UTF8Mode DATA
 PyExceptionClass_Name
 PyIndex_Check
 PyIter_Check
-PyDictRevIterItem_Type DATA
-PyDictRevIterKey_Type DATA
-PyDictRevIterValue_Type DATA
 PyInterpreterState_GetDict
 Py_BytesMain
 Py_EnterRecursiveCall
 Py_LeaveRecursiveCall
 Py_GenericAlias
-Py_GenericAliasType DATA
 PyCMethod_New
 PyInterpreterState_Get
 PyObject_GC_IsFinalized
@@ -824,7 +686,6 @@ PyThreadState_GetFrame
 PyThreadState_GetID
 PyThreadState_GetInterpreter
 PyModule_AddObjectRef
-Py_FileSystemDefaultEncodeErrors DATA
 PyCodec_Unregister
 PyErr_SetInterruptEx
 Py_Is
@@ -835,15 +696,12 @@ _Py_IncRef
 _Py_DecRef
 PyAIter_Check
 PyObject_GetAIter
-PyExc_EncodingWarning DATA
-_Py_RefTotal DATA
 _Py_NegativeRefcount
 PyGC_Disable
 PyGC_Enable
 PyGC_IsEnabled
 PyType_GetName
 PyType_GetQualName
-PyStructSequence_UnnamedField DATA
 PyObject_CheckBuffer
 PyObject_GetBuffer
 PyBuffer_GetPointer
@@ -856,6 +714,148 @@ PyBuffer_FillContiguousStrides
 PyBuffer_FillInfo
 PyBuffer_Release
 PyMemoryView_FromBuffer
-Py_Version DATA
 PyErr_GetHandledException
 PyErr_SetHandledException
+PyBaseObject_Type DATA
+PyBool_Type DATA
+PyByteArrayIter_Type DATA
+PyByteArray_Type DATA
+PyBytesIter_Type DATA
+PyBytes_Type DATA
+PyCFunction_Type DATA
+PyCallIter_Type DATA
+PyCapsule_Type DATA
+PyClassMethodDescr_Type DATA
+PyComplex_Type DATA
+PyDictItems_Type DATA
+PyDictIterItem_Type DATA
+PyDictIterKey_Type DATA
+PyDictIterValue_Type DATA
+PyDictKeys_Type DATA
+PyDictProxy_Type DATA
+PyDictValues_Type DATA
+PyDict_Type DATA
+PyEllipsis_Type DATA
+PyEnum_Type DATA
+PyExc_ArithmeticError DATA
+PyExc_AssertionError DATA
+PyExc_AttributeError DATA
+PyExc_BaseException DATA
+PyExc_BaseExceptionGroup DATA
+PyExc_BufferError DATA
+PyExc_BytesWarning DATA
+PyExc_DeprecationWarning DATA
+PyExc_EOFError DATA
+PyExc_EnvironmentError DATA
+PyExc_Exception DATA
+PyExc_FloatingPointError DATA
+PyExc_FutureWarning DATA
+PyExc_GeneratorExit DATA
+PyExc_IOError DATA
+PyExc_ImportError DATA
+PyExc_ImportWarning DATA
+PyExc_IndentationError DATA
+PyExc_IndexError DATA
+PyExc_KeyError DATA
+PyExc_KeyboardInterrupt DATA
+PyExc_LookupError DATA
+PyExc_MemoryError DATA
+PyExc_NameError DATA
+PyExc_NotImplementedError DATA
+PyExc_OSError DATA
+PyExc_OverflowError DATA
+PyExc_PendingDeprecationWarning DATA
+PyExc_ReferenceError DATA
+PyExc_RuntimeError DATA
+PyExc_RuntimeWarning DATA
+PyExc_StopIteration DATA
+PyExc_SyntaxError DATA
+PyExc_SyntaxWarning DATA
+PyExc_SystemError DATA
+PyExc_SystemExit DATA
+PyExc_TabError DATA
+PyExc_TypeError DATA
+PyExc_UnboundLocalError DATA
+PyExc_UnicodeDecodeError DATA
+PyExc_UnicodeEncodeError DATA
+PyExc_UnicodeError DATA
+PyExc_UnicodeTranslateError DATA
+PyExc_UnicodeWarning DATA
+PyExc_UserWarning DATA
+PyExc_ValueError DATA
+PyExc_Warning DATA
+PyExc_ZeroDivisionError DATA
+PyFilter_Type DATA
+PyFloat_Type DATA
+PyFrozenSet_Type DATA
+PyGetSetDescr_Type DATA
+PyListIter_Type DATA
+PyListRevIter_Type DATA
+PyList_Type DATA
+PyLongRangeIter_Type DATA
+PyLong_Type DATA
+PyMap_Type DATA
+PyMemberDescr_Type DATA
+PyMemoryView_Type DATA
+PyMethodDescr_Type DATA
+PyModule_Type DATA
+PyOS_InputHook DATA
+PyProperty_Type DATA
+PyRangeIter_Type DATA
+PyRange_Type DATA
+PyReversed_Type DATA
+PySeqIter_Type DATA
+PySetIter_Type DATA
+PySet_Type DATA
+PySlice_Type DATA
+PySuper_Type DATA
+PyTraceBack_Type DATA
+PyTupleIter_Type DATA
+PyTuple_Type DATA
+PyType_Type DATA
+PyUnicodeIter_Type DATA
+PyUnicode_Type DATA
+PyWrapperDescr_Type DATA
+PyZip_Type DATA
+Py_FileSystemDefaultEncoding DATA
+Py_HasFileSystemDefaultEncoding DATA
+_PyWeakref_CallableProxyType DATA
+_PyWeakref_ProxyType DATA
+_PyWeakref_RefType DATA
+_Py_EllipsisObject DATA
+_Py_FalseStruct DATA
+_Py_NoneStruct DATA
+_Py_NotImplementedStruct DATA
+_Py_SwappedOp DATA
+_Py_TrueStruct DATA
+PyModuleDef_Type DATA
+PyExc_ModuleNotFoundError DATA
+PyExc_BlockingIOError DATA
+PyExc_BrokenPipeError DATA
+PyExc_ChildProcessError DATA
+PyExc_ConnectionAbortedError DATA
+PyExc_ConnectionError DATA
+PyExc_ConnectionRefusedError DATA
+PyExc_ConnectionResetError DATA
+PyExc_FileExistsError DATA
+PyExc_FileNotFoundError DATA
+PyExc_InterruptedError DATA
+PyExc_IsADirectoryError DATA
+PyExc_NotADirectoryError DATA
+PyExc_PermissionError DATA
+PyExc_ProcessLookupError DATA
+PyExc_RecursionError DATA
+PyExc_ResourceWarning DATA
+PyExc_StopAsyncIteration DATA
+PyExc_TimeoutError DATA
+PyExc_WindowsError DATA
+Py_UTF8Mode DATA
+PyDictRevIterItem_Type DATA
+PyDictRevIterKey_Type DATA
+PyDictRevIterValue_Type DATA
+Py_GenericAliasType DATA
+Py_FileSystemDefaultEncodeErrors DATA
+PyExc_EncodingWarning DATA
+_Py_RefTotal DATA
+PyStructSequence_UnnamedField DATA
+Py_Version DATA
