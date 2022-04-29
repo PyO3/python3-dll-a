@@ -19,4 +19,4 @@ for data in stable_abi["data"].keys():
     print(f"{data} DATA")
     count += 1
 
-assert count >= 861
+assert count >= 859
