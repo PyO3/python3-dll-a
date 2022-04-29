@@ -17,7 +17,6 @@ jobs:
         curl https://raw.githubusercontent.com/python/cpython/main/Misc/stable_abi.toml > stable_abi.toml
     - name: Install Python TOML parser
       run: |
-        sudo apt-get install --yes python3-pip
         pip install tomli
     - name: Parse stable_abi.toml to produce python3.def
       run: |
