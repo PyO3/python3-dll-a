@@ -14,13 +14,16 @@ jobs:
     - uses: actions/checkout@v3
     - name: Fetch latest stable_abi.txt
       run: |
-        curl https://raw.githubusercontent.com/python/cpython/main/Misc/stable_abi.txt > Misc/stable_abi.txt
+        curl https://raw.githubusercontent.com/python/cpython/main/Misc/stable_abi.txt > stable_abi.txt
+    - name: Parse stable_abi.txt to produce python3.def
+      run: |
+        ./parse-stable-abi.py < stable_abi.txt > src/python3.def
     - name: Create Pull Request
       uses: peter-evans/create-pull-request@v4
       with:
         delete-branch: true
         add-paths: |
-          Misc/stable_abi.txt
-        title: 'Update stable_abi.txt to the latest main'
-        commit-message: 'chore: Update stable_abi.txt to the latest main'
+          src/python3.def
+        title: 'Update python3.def using stable_abi.txt from the latest main'
+        commit-message: 'chore: Update python3.def using stable_abi.txt from the latest main'
         body: 'Source: https://raw.githubusercontent.com/python/cpython/main/Misc/stable_abi.txt'
