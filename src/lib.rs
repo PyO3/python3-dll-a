@@ -56,7 +56,7 @@
 //!         let env = std::env::var("CARGO_CFG_TARGET_ENV").unwrap();
 //!
 //!         let libdir = std::path::Path::new(&cross_lib_dir);
-//!         python3_dll_a::generate_implib_for_target(libdir, &arch, &env)
+//!         python3_dll_a::generate_implib_for_target(None, libdir, &arch, &env)
 //!             .expect("python3.dll import library generator failed");
 //!     }
 //! }
@@ -80,17 +80,11 @@ use std::io::{Error, ErrorKind, Result};
 use std::path::Path;
 use std::process::Command;
 
-/// Module-Definition file name for `python3.dll`
-const DEF_FILE: &str = "python3.def";
+/// Import library file extension for the GNU environment ABI (MinGW-w64)
+const IMPLIB_EXT_GNU: &str = ".dll.a";
 
-/// Module-Definition file content for `python3.dll`
-const DEF_FILE_CONTENT: &[u8] = include_bytes!("python3.def");
-
-/// Canonical `python3.dll` import library file name for the GNU environment ABI (MinGW-w64)
-const IMPLIB_FILE_GNU: &str = "python3.dll.a";
-
-/// Canonical `python3.dll` import library file name for the MSVC environment ABI
-const IMPLIB_FILE_MSVC: &str = "python3.lib";
+/// Import library file extension for the MSVC environment ABI
+const IMPLIB_EXT_MSVC: &str = ".lib";
 
 /// Canonical MinGW-w64 `dlltool` program name
 const DLLTOOL_GNU: &str = "x86_64-w64-mingw32-dlltool";
@@ -115,26 +109,52 @@ const LIB_MSVC: &str = "lib.exe";
 ///
 /// The compile target environment ABI name (as in `CARGO_CFG_TARGET_ENV`)
 /// is passed in `env`.
-pub fn generate_implib_for_target(out_dir: &Path, arch: &str, env: &str) -> Result<()> {
+pub fn generate_implib_for_target(
+    version: Option<(u8, u8)>,
+    out_dir: &Path,
+    arch: &str,
+    env: &str,
+) -> Result<()> {
     create_dir_all(out_dir)?;
 
     let mut defpath = out_dir.to_owned();
-    defpath.push(DEF_FILE);
+    let (def_file, def_file_content) = match version {
+        None => ("python3.def", include_str!("python3.def")),
+        Some((3, 7)) => ("python37.def", include_str!("python37.def")),
+        Some((3, 8)) => ("python38.def", include_str!("python38.def")),
+        Some((3, 9)) => ("python39.def", include_str!("python39.def")),
+        Some((3, 10)) => ("python310.def", include_str!("python310.def")),
+        Some((3, 11)) => ("python311.def", include_str!("python311.def")),
+        _ => return Err(Error::new(ErrorKind::Other, "Unsupported Python version")),
+    };
+    defpath.push(def_file);
 
-    write(&defpath, DEF_FILE_CONTENT)?;
+    write(&defpath, def_file_content)?;
 
     // Try to guess the `dlltool` executable name from the target triple.
-    let (command, dlltool) = match (arch, env) {
+    let (command, dlltool, implib_file) = match (arch, env) {
         // 64-bit MinGW-w64 (aka x86_64-pc-windows-gnu)
-        ("x86_64", "gnu") => (Command::new(DLLTOOL_GNU), DLLTOOL_GNU),
+        ("x86_64", "gnu") => (
+            Command::new(DLLTOOL_GNU),
+            DLLTOOL_GNU,
+            def_file.replace(".def", IMPLIB_EXT_GNU),
+        ),
         // 32-bit MinGW-w64 (aka i686-pc-windows-gnu)
-        ("x86", "gnu") => (Command::new(DLLTOOL_GNU_32), DLLTOOL_GNU_32),
+        ("x86", "gnu") => (
+            Command::new(DLLTOOL_GNU_32),
+            DLLTOOL_GNU_32,
+            def_file.replace(".def", IMPLIB_EXT_GNU),
+        ),
         // MSVC ABI (multiarch)
         (_, "msvc") => {
             if let Some(command) = find_lib_exe(arch) {
-                (command, LIB_MSVC)
+                (command, LIB_MSVC, def_file.replace(".def", IMPLIB_EXT_MSVC))
             } else {
-                (Command::new(DLLTOOL_MSVC), DLLTOOL_MSVC)
+                (
+                    Command::new(DLLTOOL_MSVC),
+                    DLLTOOL_MSVC,
+                    def_file.replace(".def", IMPLIB_EXT_MSVC),
+                )
             }
         }
         _ => {
@@ -144,7 +164,8 @@ pub fn generate_implib_for_target(out_dir: &Path, arch: &str, env: &str) -> Resu
     };
 
     // Run the selected `dlltool` executable to generate the import library.
-    let status = build_dlltool_command(command, dlltool, arch, &defpath, out_dir).status()?;
+    let status =
+        build_dlltool_command(command, dlltool, &implib_file, arch, &defpath, out_dir).status()?;
 
     if status.success() {
         Ok(())
@@ -177,6 +198,7 @@ fn find_lib_exe(_arch: &str) -> Option<Command> {
 fn build_dlltool_command(
     mut command: Command,
     dlltool: &str,
+    implib_file: &str,
     arch: &str,
     defpath: &Path,
     out_dir: &Path,
@@ -185,7 +207,7 @@ fn build_dlltool_command(
 
     // Check whether we are using LLVM `dlltool` or MinGW `dlltool`.
     if dlltool == DLLTOOL_MSVC {
-        libpath.push(IMPLIB_FILE_MSVC);
+        libpath.push(implib_file);
 
         // LLVM tools use their own target architecture names...
         let machine = match arch {
@@ -203,7 +225,7 @@ fn build_dlltool_command(
             .arg("-l")
             .arg(libpath);
     } else if dlltool == LIB_MSVC {
-        libpath.push(IMPLIB_FILE_MSVC);
+        libpath.push(implib_file);
 
         // lib.exe use their own target architecure names...
         let machine = match arch {
@@ -217,7 +239,7 @@ fn build_dlltool_command(
             .arg(format!("/DEF:{}", defpath.display()))
             .arg(format!("/OUT:{}", libpath.display()));
     } else {
-        libpath.push(IMPLIB_FILE_GNU);
+        libpath.push(implib_file);
 
         command
             .arg("--input-def")
@@ -244,7 +266,12 @@ mod tests {
         dir.push("x86_64-pc-windows-gnu");
         dir.push("python3-dll");
 
-        generate_implib_for_target(&dir, "x86_64", "gnu").unwrap();
+        generate_implib_for_target(None, &dir, "x86_64", "gnu").unwrap();
+        generate_implib_for_target(Some((3, 7)), &dir, "x86_64", "gnu").unwrap();
+        generate_implib_for_target(Some((3, 8)), &dir, "x86_64", "gnu").unwrap();
+        generate_implib_for_target(Some((3, 9)), &dir, "x86_64", "gnu").unwrap();
+        generate_implib_for_target(Some((3, 10)), &dir, "x86_64", "gnu").unwrap();
+        generate_implib_for_target(Some((3, 11)), &dir, "x86_64", "gnu").unwrap();
     }
 
     #[cfg(unix)]
@@ -255,7 +282,7 @@ mod tests {
         dir.push("i686-pc-windows-gnu");
         dir.push("python3-dll");
 
-        generate_implib_for_target(&dir, "x86", "gnu").unwrap();
+        generate_implib_for_target(None, &dir, "x86", "gnu").unwrap();
     }
 
     #[test]
@@ -265,7 +292,7 @@ mod tests {
         dir.push("x86_64-pc-windows-msvc");
         dir.push("python3-dll");
 
-        generate_implib_for_target(&dir, "x86_64", "msvc").unwrap();
+        generate_implib_for_target(None, &dir, "x86_64", "msvc").unwrap();
     }
 
     #[test]
@@ -275,7 +302,7 @@ mod tests {
         dir.push("i686-pc-windows-msvc");
         dir.push("python3-dll");
 
-        generate_implib_for_target(&dir, "x86", "msvc").unwrap();
+        generate_implib_for_target(None, &dir, "x86", "msvc").unwrap();
     }
 
     #[test]
@@ -285,6 +312,6 @@ mod tests {
         dir.push("aarch64-pc-windows-msvc");
         dir.push("python3-dll");
 
-        generate_implib_for_target(&dir, "aarch64", "msvc").unwrap();
+        generate_implib_for_target(None, &dir, "aarch64", "msvc").unwrap();
     }
 }
