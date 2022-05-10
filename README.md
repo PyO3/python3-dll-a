@@ -56,7 +56,7 @@ fn main() {
         let env = std::env::var("CARGO_CFG_TARGET_ENV").unwrap();
 
         let libdir = std::path::Path::new(&cross_lib_dir);
-        python3_dll_a::generate_implib_for_target(None, libdir, &arch, &env)
+        python3_dll_a::generate_implib_for_target(libdir, &arch, &env)
             .expect("python3.dll import library generator failed");
     }
 }
