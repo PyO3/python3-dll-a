@@ -192,7 +192,10 @@ impl ImportLibraryGenerator {
         };
 
         // Run the selected `dlltool` executable to generate the import library.
-        let status = command.status()?;
+        let status = command.status().map_err(|e| {
+            let msg = format!("{:?} failed with {}", command, e);
+            Error::new(e.kind(), msg)
+        })?;
 
         if status.success() {
             Ok(())
