@@ -148,25 +148,29 @@ impl ImportLibraryGenerator {
 
         write(&defpath, def_file_content)?;
 
+        let impllib_ext = if self.env == "msvc" {
+            IMPLIB_EXT_MSVC
+        } else {
+            IMPLIB_EXT_GNU
+        };
+        let implib_file = match self.version {
+            Some((major, minor)) => {
+                format!("python{}{}{}", major, minor, impllib_ext)
+            }
+            None => format!("python3{}", impllib_ext),
+        };
         // Try to guess the `dlltool` executable name from the target triple.
         let mut command = match (self.arch.as_str(), self.env.as_str()) {
             // 64-bit MinGW-w64 (aka x86_64-pc-windows-gnu)
-            ("x86_64", "gnu") => self.build_dlltool_command(
-                DLLTOOL_GNU,
-                &def_file.replace(".def", IMPLIB_EXT_GNU),
-                &defpath,
-                out_dir,
-            ),
+            ("x86_64", "gnu") => {
+                self.build_dlltool_command(DLLTOOL_GNU, &implib_file, &defpath, out_dir)
+            }
             // 32-bit MinGW-w64 (aka i686-pc-windows-gnu)
-            ("x86", "gnu") => self.build_dlltool_command(
-                DLLTOOL_GNU_32,
-                &def_file.replace(".def", IMPLIB_EXT_GNU),
-                &defpath,
-                out_dir,
-            ),
+            ("x86", "gnu") => {
+                self.build_dlltool_command(DLLTOOL_GNU_32, &implib_file, &defpath, out_dir)
+            }
             // MSVC ABI (multiarch)
             (_, "msvc") => {
-                let implib_file = def_file.replace(".def", IMPLIB_EXT_MSVC);
                 if let Some(command) = find_lib_exe(&self.arch) {
                     self.build_dlltool_command(
                         command.get_program(),
