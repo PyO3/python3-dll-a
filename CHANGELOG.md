@@ -2,6 +2,17 @@
 
 All notable changes to this project will be documented in this file.
 
+## [0.2.2] - 2022-05-10
+
+### Features
+
+- Include `python3.def` itself in the Rust source in [#10](https://github.com/pyo3/python3-dll-a/pull/10)
+- Add support for generating non-abi3 `pythonXY.dll` in [#15](https://github.com/pyo3/python3-dll-a/pull/15)
+
+### CI
+
+- Automate `stable_abi.txt` updates in [#6](https://github.com/pyo3/python3-dll-a/pull/6)
+
 ## [0.2.1] - 2022-04-17
 
 ### Features
