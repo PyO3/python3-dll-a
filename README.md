@@ -1,18 +1,19 @@
-Standalone `python3.dll` import library generator
-=================================================
+Standalone `python3(y).dll` import library generator
+====================================================
 
-Generates import libraries for the Stable ABI Python DLL
+Generates import libraries for the Python DLL
+(either `python3.dll` or `python3y.dll`)
 for MinGW-w64 and MSVC (cross-)compile targets.
 
-See <https://docs.python.org/3/c-api/stable.html> for details.
+See <https://docs.python.org/3/c-api/stable.html> for the Stable ABI details.
 
 This crate **does not require** Python 3 distribution files
 to be present on the (cross-)compile host system.
 
-**Note:** MSVC (cross-)compile targets require LLVM binutils
+**Note:** MSVC cross-compile targets require LLVM binutils
 to be available on the host system.
 More specifically, `python3-dll-a` requires `llvm-dlltool` executable
-to be present in `PATH` when targeting `*-pc-windows-msvc`.
+to be present in `PATH` when targeting `*-pc-windows-msvc` from Linux.
 
 PyO3 integration
 ----------------
@@ -79,7 +80,5 @@ This crate embeds Module-Defitions based on the `stable_abi.toml` file from CPyt
 
 The upstream version of this file is located in the [CPython project][cpython]
 repository under the path `Misc/stable_abi.toml`.
-This file should be updated for every subsequent CPython release
-(e.g. for CPython 3.12).
 
 [cpython]: https://github.com/python/cpython/blob/main/Misc/stable_abi.toml
