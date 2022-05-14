@@ -76,7 +76,6 @@
 #![deny(missing_docs)]
 #![allow(clippy::needless_doctest_main)]
 
-use std::ffi::OsStr;
 use std::fs::{create_dir_all, write};
 use std::io::{Error, ErrorKind, Result};
 use std::path::{Path, PathBuf};
@@ -98,6 +97,7 @@ const DLLTOOL_GNU_32: &str = "i686-w64-mingw32-dlltool";
 const DLLTOOL_MSVC: &str = "llvm-dlltool";
 
 /// Canonical `lib` program name for the MSVC environment ABI (MSVC lib.exe)
+#[cfg(windows)]
 const LIB_MSVC: &str = "lib.exe";
 
 /// Windows import library generator for Python
@@ -150,27 +150,10 @@ impl ImportLibraryGenerator {
         let implib_file = self.implib_file_path(out_dir);
 
         // Try to guess the `dlltool` executable name from the target triple.
-        let mut command = match (self.arch.as_str(), self.env.as_str()) {
-            // 64-bit MinGW-w64 (aka x86_64-pc-windows-gnu)
-            ("x86_64", "gnu") => self.build_dlltool_command(DLLTOOL_GNU, &implib_file, &defpath),
-            // 32-bit MinGW-w64 (aka i686-pc-windows-gnu)
-            ("x86", "gnu") => self.build_dlltool_command(DLLTOOL_GNU_32, &implib_file, &defpath),
-            // MSVC ABI (multiarch)
-            (_, "msvc") => {
-                if let Some(command) = find_lib_exe(&self.arch) {
-                    self.build_dlltool_command(command.get_program(), &implib_file, &defpath)
-                } else {
-                    self.build_dlltool_command(DLLTOOL_MSVC, &implib_file, &defpath)
-                }
-            }
-            _ => {
-                let msg = format!(
-                    "Unsupported target arch '{}' or env ABI '{}'",
-                    self.arch, self.env
-                );
-                return Err(Error::new(ErrorKind::Other, msg));
-            }
-        };
+        let dlltool_command = DllToolCommand::find_for_target(&self.arch, &self.env)?;
+
+        // Build the complete `dlltool` command with all required arguments.
+        let mut command = dlltool_command.build(&defpath, &implib_file);
 
         // Run the selected `dlltool` executable to generate the import library.
         let status = command.status().map_err(|e| {
@@ -230,62 +213,6 @@ impl ImportLibraryGenerator {
 
         libpath
     }
-
-    /// Generates the complete `dlltool` executable invocation command.
-    ///
-    /// Supports Visual Studio `lib.exe`, LLVM and MinGW `dlltool` flavors.
-    fn build_dlltool_command(
-        &self,
-        dlltool: impl AsRef<OsStr>,
-        libpath: &Path,
-        defpath: &Path,
-    ) -> Command {
-        let dlltool = dlltool.as_ref();
-        let mut command = if self.env == "msvc" {
-            find_lib_exe(&self.arch).unwrap_or_else(|| Command::new(dlltool))
-        } else {
-            Command::new(dlltool)
-        };
-
-        // Check whether we are using LLVM `dlltool` or MinGW `dlltool`.
-        if dlltool == DLLTOOL_MSVC {
-            // LLVM tools use their own target architecture names...
-            let machine = match self.arch.as_str() {
-                "x86_64" => "i386:x86-64",
-                "x86" => "i386",
-                "aarch64" => "arm64",
-                arch => arch,
-            };
-
-            command
-                .arg("-m")
-                .arg(machine)
-                .arg("-d")
-                .arg(defpath)
-                .arg("-l")
-                .arg(libpath);
-        } else if Path::new(dlltool).file_name() == Some(LIB_MSVC.as_ref()) {
-            // lib.exe use their own target architecure names...
-            let machine = match self.arch.as_str() {
-                "x86_64" => "X64",
-                "x86" => "X86",
-                "aarch64" => "ARM64",
-                arch => arch,
-            };
-            command
-                .arg(format!("/MACHINE:{}", machine))
-                .arg(format!("/DEF:{}", defpath.display()))
-                .arg(format!("/OUT:{}", libpath.display()));
-        } else {
-            command
-                .arg("--input-def")
-                .arg(defpath)
-                .arg("--output-lib")
-                .arg(libpath);
-        }
-
-        command
-    }
 }
 
 /// Generates `python3.dll` import library directly from the embedded
@@ -301,6 +228,128 @@ impl ImportLibraryGenerator {
 /// is passed in `env`.
 pub fn generate_implib_for_target(out_dir: &Path, arch: &str, env: &str) -> Result<()> {
     ImportLibraryGenerator::new(arch, env).generate(out_dir)
+}
+
+/// `dlltool` utility command builder
+///
+/// Supports Visual Studio `lib.exe`, MinGW, LLVM and Zig `dlltool` flavors.
+#[derive(Debug)]
+enum DllToolCommand {
+    /// MinGW `dlltool` program (with prefix)
+    Mingw { command: Command },
+    /// LLVM `llvm-dlltool` program (no prefix)
+    Llvm { command: Command, machine: String },
+    /// MSVC `lib.exe` program (no prefix)
+    LibExe { command: Command, machine: String },
+    /// `zig dlltool` wrapper (no prefix)
+    #[allow(dead_code)]
+    Zig { command: Command, machine: String },
+}
+
+impl DllToolCommand {
+    /// Attempts to find the best matching `dlltool` flavor for the target.
+    fn find_for_target(arch: &str, env: &str) -> Result<DllToolCommand> {
+        match (arch, env) {
+            // 64-bit MinGW-w64 (aka `x86_64-pc-windows-gnu`)
+            ("x86_64", "gnu") => Ok(DllToolCommand::Mingw {
+                command: Command::new(DLLTOOL_GNU),
+            }),
+
+            // 32-bit MinGW-w64 (aka `i686-pc-windows-gnu`)
+            ("x86", "gnu") => Ok(DllToolCommand::Mingw {
+                command: Command::new(DLLTOOL_GNU_32),
+            }),
+
+            // MSVC ABI (multiarch)
+            (_, "msvc") => {
+                if let Some(command) = find_lib_exe(arch) {
+                    // MSVC tools use their own target architecture names...
+                    let machine = match arch {
+                        "x86_64" => "X64",
+                        "x86" => "X86",
+                        "aarch64" => "ARM64",
+                        arch => arch,
+                    }
+                    .to_owned();
+
+                    Ok(DllToolCommand::LibExe { command, machine })
+                } else {
+                    // LLVM tools use their own target architecture names...
+                    let machine = match arch {
+                        "x86_64" => "i386:x86-64",
+                        "x86" => "i386",
+                        "aarch64" => "arm64",
+                        arch => arch,
+                    }
+                    .to_owned();
+
+                    let command = Command::new(DLLTOOL_MSVC);
+
+                    Ok(DllToolCommand::Llvm { command, machine })
+                }
+            }
+            _ => {
+                let msg = format!("Unsupported target arch '{}' or env ABI '{}'", arch, env);
+                Err(Error::new(ErrorKind::Other, msg))
+            }
+        }
+    }
+
+    /// Generates the complete `dlltool` executable invocation command.
+    fn build(self, defpath: &Path, libpath: &Path) -> Command {
+        match self {
+            Self::Mingw { mut command } => {
+                command
+                    .arg("--input-def")
+                    .arg(defpath)
+                    .arg("--output-lib")
+                    .arg(libpath);
+
+                command
+            }
+            Self::Llvm {
+                mut command,
+                machine,
+            } => {
+                command
+                    .arg("-m")
+                    .arg(machine)
+                    .arg("-d")
+                    .arg(defpath)
+                    .arg("-l")
+                    .arg(libpath);
+
+                command
+            }
+            Self::LibExe {
+                mut command,
+                machine,
+            } => {
+                command
+                    .arg(format!("/MACHINE:{}", machine))
+                    .arg(format!("/DEF:{}", defpath.display()))
+                    .arg(format!("/OUT:{}", libpath.display()));
+
+                command
+            }
+            Self::Zig {
+                mut command,
+                machine,
+            } => {
+                // Same as `llvm-dlltool`, but invoked as `zig dlltool`.
+                command
+                    .arg("dlltool")
+                    .arg("-m")
+                    .arg(machine)
+                    .arg("-d")
+                    .arg(defpath)
+                    .arg("-l")
+                    .arg(libpath);
+
+                command
+            }
+        }
+    }
 }
 
 /// Finds Visual Studio `lib.exe` when running on Windows.
