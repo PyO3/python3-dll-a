@@ -76,6 +76,7 @@
 #![deny(missing_docs)]
 #![allow(clippy::needless_doctest_main)]
 
+use std::env;
 use std::fs::{create_dir_all, write};
 use std::io::{Error, ErrorKind, Result};
 use std::path::{Path, PathBuf};
@@ -242,13 +243,26 @@ enum DllToolCommand {
     /// MSVC `lib.exe` program (no prefix)
     LibExe { command: Command, machine: String },
     /// `zig dlltool` wrapper (no prefix)
-    #[allow(dead_code)]
     Zig { command: Command, machine: String },
 }
 
 impl DllToolCommand {
     /// Attempts to find the best matching `dlltool` flavor for the target.
     fn find_for_target(arch: &str, env: &str) -> Result<DllToolCommand> {
+        // LLVM tools use their own target architecture names...
+        let machine = match arch {
+            "x86_64" => "i386:x86-64",
+            "x86" => "i386",
+            "aarch64" => "arm64",
+            arch => arch,
+        }
+        .to_owned();
+
+        // If `zig cc` is used as the linker, `zig dlltool` is the best choice.
+        if let Some(command) = find_zig() {
+            return Ok(DllToolCommand::Zig { command, machine });
+        }
+
         match (arch, env) {
             // 64-bit MinGW-w64 (aka `x86_64-pc-windows-gnu`)
             ("x86_64", "gnu") => Ok(DllToolCommand::Mingw {
@@ -274,15 +288,6 @@ impl DllToolCommand {
 
                     Ok(DllToolCommand::LibExe { command, machine })
                 } else {
-                    // LLVM tools use their own target architecture names...
-                    let machine = match arch {
-                        "x86_64" => "i386:x86-64",
-                        "x86" => "i386",
-                        "aarch64" => "arm64",
-                        arch => arch,
-                    }
-                    .to_owned();
-
                     let command = Command::new(DLLTOOL_MSVC);
 
                     Ok(DllToolCommand::Llvm { command, machine })
@@ -350,6 +355,27 @@ impl DllToolCommand {
             }
         }
     }
+}
+
+/// Finds the `zig` executable (when built by ``maturin --zig`).
+///
+/// Examines the `ZIG_COMMAND` environment variable
+/// to find out if `zig cc` is being used as the linker.
+fn find_zig() -> Option<Command> {
+    // `ZIG_COMMAND` may contain simply `zig` or `/usr/bin/zig`,
+    // or a more complex construct like `python3 -m ziglang`.
+    let zig_command = env::var("ZIG_COMMAND").ok()?;
+
+    // Try to emulate `sh -c ${ZIG_COMMAND}`.
+    let mut zig_cmdlet = zig_command.split_ascii_whitespace();
+
+    // Extract the main program component (e.g. `zig` or `python3`).
+    let mut zig = Command::new(zig_cmdlet.next()?);
+
+    // Append the rest of the commandlet.
+    zig.args(zig_cmdlet);
+
+    Some(zig)
 }
 
 /// Finds Visual Studio `lib.exe` when running on Windows.
