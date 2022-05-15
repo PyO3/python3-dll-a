@@ -421,6 +421,10 @@ mod tests {
         dir.push("x86_64-pc-windows-gnu");
         dir.push("python3-dll");
 
+        ImportLibraryGenerator::new("x86_64", "gnu")
+            .generate(&dir)
+            .unwrap();
+
         for minor in 7..=11 {
             ImportLibraryGenerator::new("x86_64", "gnu")
                 .version(Some((3, minor)))
@@ -447,7 +451,10 @@ mod tests {
         dir.push("x86_64-pc-windows-msvc");
         dir.push("python3-dll");
 
-        generate_implib_for_target(&dir, "x86_64", "msvc").unwrap();
+        ImportLibraryGenerator::new("x86_64", "msvc")
+            .generate(&dir)
+            .unwrap();
+
         for minor in 7..=11 {
             ImportLibraryGenerator::new("x86_64", "msvc")
                 .version(Some((3, minor)))
