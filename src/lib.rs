@@ -148,10 +148,14 @@ impl ImportLibraryGenerator {
         create_dir_all(out_dir)?;
 
         let defpath = self.write_def_file(out_dir)?;
-        let implib_file = self.implib_file_path(out_dir);
 
         // Try to guess the `dlltool` executable name from the target triple.
         let dlltool_command = DllToolCommand::find_for_target(&self.arch, &self.env)?;
+
+        // Get the import library file extension from the used `dlltool` flavor.
+        let implib_ext = dlltool_command.implib_file_ext();
+
+        let implib_file = self.implib_file_path(out_dir, implib_ext);
 
         // Build the complete `dlltool` command with all required arguments.
         let mut command = dlltool_command.build(&defpath, &implib_file);
@@ -194,14 +198,10 @@ impl ImportLibraryGenerator {
 
     /// Builds the generated import library file name.
     ///
+    /// The output file extension is passed in `libext`.
+    ///
     /// Returns the full import library file path under `out_dir`.
-    fn implib_file_path(&self, out_dir: &Path) -> PathBuf {
-        let libext = if self.env == "msvc" {
-            IMPLIB_EXT_MSVC
-        } else {
-            IMPLIB_EXT_GNU
-        };
-
+    fn implib_file_path(&self, out_dir: &Path, libext: &str) -> PathBuf {
         let libname = match self.version {
             Some((major, minor)) => {
                 format!("python{}{}{}", major, minor, libext)
@@ -297,6 +297,16 @@ impl DllToolCommand {
                 let msg = format!("Unsupported target arch '{}' or env ABI '{}'", arch, env);
                 Err(Error::new(ErrorKind::Other, msg))
             }
+        }
+    }
+
+    /// Returns the import library file extension used by
+    /// this `dlltool` flavor.
+    fn implib_file_ext(&self) -> &'static str {
+        if let DllToolCommand::Mingw { .. } = self {
+            IMPLIB_EXT_GNU
+        } else {
+            IMPLIB_EXT_MSVC
         }
     }
 
