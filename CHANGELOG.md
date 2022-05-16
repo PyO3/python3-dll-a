@@ -2,6 +2,16 @@
 
 All notable changes to this project will be documented in this file.
 
+## Unreleased
+
+### Features
+
+- Add `zig dlltool` support in [#18](https://github.com/pyo3/python3-dll-a/pull/18)
+
+### Fixes
+
+- Improve error message when `dlltool` is not found in [#17](https://github.com/pyo3/python3-dll-a/pull/17)
+
 ## [0.2.2] - 2022-05-10
 
 ### Features
