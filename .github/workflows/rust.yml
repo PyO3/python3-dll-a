@@ -37,6 +37,18 @@ jobs:
         version: 0.9.1
     - name: Run tests with zig
       run: ZIG_COMMAND=zig cargo test --verbose
+  zigwheel:
+    name: Test python -m ziglang dlltool
+    runs-on: ubuntu-latest
+    steps:
+    - uses: actions/checkout@v3
+    - uses: actions/setup-python@v2
+      with:
+        python-version: "3.10"
+    - name: Install ziglang package
+      run: pip install ziglang
+    - name: Run tests with python -m ziglang
+      run: ZIG_COMMAND="python -m ziglang" cargo test --verbose
   fmt:
     name: Check code formatting
     runs-on: ubuntu-latest
