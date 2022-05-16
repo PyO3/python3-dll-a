@@ -5,15 +5,17 @@
 //! (either `python3.dll` or `python3y.dll`)
 //! for MinGW-w64 and MSVC (cross-)compile targets.
 //!
-//! See <https://docs.python.org/3/c-api/stable.html> for the Stable ABI details.
-//!
 //! This crate **does not require** Python 3 distribution files
 //! to be present on the (cross-)compile host system.
 //!
-//! **Note:** MSVC cross-compile targets require LLVM binutils
-//! to be available on the host system.
+//! **Note:** MSVC cross-compile targets require either LLVM binutils
+//! or Zig to be available on the host system.
 //! More specifically, `python3-dll-a` requires `llvm-dlltool` executable
 //! to be present in `PATH` when targeting `*-pc-windows-msvc` from Linux.
+//!
+//! Alternatively, `ZIG_COMMAND` environment variable may be set to e.g. "zig"
+//! or "python -m ziglang", then `zig dlltool` will be used in place
+//! of `llvm-dlltool` (or MinGW binutils).
 //!
 //! PyO3 integration
 //! ----------------
@@ -42,7 +44,7 @@
 //!
 //! The examples below assume using an older version of PyO3.
 //!
-//! ### Example `build.rs` script
+//! ### Example `build.rs` script for an `abi3` PyO3 extension
 //!
 //! The following cargo build script can be used to cross-compile Stable ABI
 //! PyO3 extension modules for Windows (64/32-bit x86 or 64-bit ARM)
@@ -72,6 +74,14 @@
 //! ```sh
 //! PYO3_CROSS_LIB_DIR=target/python3-dll cargo build --target x86_64-pc-windows-gnu
 //! ```
+//!
+//! Generating version-specific `python3y.dll` import libraries
+//! -----------------------------------------------------------
+//!
+//! As an advanced feature, `python3-dll-a` can generate Python version
+//! specific import libraries such as `python39.lib`.
+//!
+//! See the [`ImportLibraryGenerator`] builder API description for details.
 
 #![deny(missing_docs)]
 #![allow(clippy::needless_doctest_main)]
@@ -105,6 +115,35 @@ const LIB_MSVC: &str = "lib.exe";
 ///
 /// Generates `python3.dll` or `pythonXY.dll` import library directly from the
 /// embedded Python ABI definitions data for the specified compile target.
+///
+/// Example usage
+/// -------------
+///
+/// ```no_run
+/// # use std::path::Path;
+/// # use python3_dll_a::ImportLibraryGenerator;
+/// // Generate `python3.dll.a` in "target/python3-dll-a"
+/// ImportLibraryGenerator::new("x86_64", "gnu")
+///     .generate(Path::new("target/python3-dll-a"))
+///     .unwrap();
+///
+/// // Generate `python3.lib` in "target/python3-lib"
+/// ImportLibraryGenerator::new("x86_64", "msvc")
+///     .generate(Path::new("target/python3-lib"))
+///     .unwrap();
+///
+/// // Generate `python39.dll.a` in "target/python3-dll-a"
+/// ImportLibraryGenerator::new("x86_64", "gnu")
+///     .version(Some((3, 9)))
+///     .generate(Path::new("target/python3-dll-a"))
+///     .unwrap();
+///
+/// // Generate `python38.lib` in "target/python3-lib"
+/// ImportLibraryGenerator::new("x86_64", "msvc")
+///     .version(Some((3, 8)))
+///     .generate(Path::new("target/python3-lib"))
+///     .unwrap();
+/// ```
 #[derive(Debug, Clone)]
 pub struct ImportLibraryGenerator {
     /// The compile target architecture name (as in `CARGO_CFG_TARGET_ARCH`)
