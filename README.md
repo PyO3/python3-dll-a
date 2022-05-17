@@ -13,26 +13,33 @@ or Zig to be available on the host system.
 More specifically, `python3-dll-a` requires `llvm-dlltool` executable
 to be present in `PATH` when targeting `*-pc-windows-msvc` from Linux.
 
-Alternatively, `ZIG_COMMAND` environment variable may be set to e.g. "zig"
-or "python -m ziglang", then `zig dlltool` will be used in place
+Alternatively, `ZIG_COMMAND` environment variable may be set to e.g. `"zig"`
+or `"python -m ziglang"`, then `zig dlltool` will be used in place
 of `llvm-dlltool` (or MinGW binutils).
 
 PyO3 integration
 ----------------
 
-Since version **0.16.4**, the `pyo3` crate implements support
-for the Stable ABI Python DLL import library generation via
-its new `generate-abi3-import-lib` feature.
+Since version **0.16.5**, the `pyo3` crate implements support
+for both the Stable ABI and version-specific Python DLL import
+library generation via its new `generate-import-lib` feature.
 
 In this configuration, `python3-dll-a` becomes a `pyo3` crate dependency
 and is automatically invoked by its build script in both native
 and cross compilation scenarios.
 
-### Example `Cargo.toml` usage for a PyO3 extension module
+### Example `Cargo.toml` usage for an `abi3` PyO3 extension module
 
 ```toml
 [dependencies]
-pyo3 = { version = "0.16.4", features = ["extension-module", "abi3-py37", "generate-abi3-import-lib"] }
+pyo3 = { version = "0.16.5", features = ["extension-module", "abi3-py37", "generate-import-lib"] }
+```
+
+### Example `Cargo.toml` usage for a standard PyO3 extension module
+
+```toml
+[dependencies]
+pyo3 = { version = "0.16.5", features = ["extension-module", "generate-import-lib"] }
 ```
 
 Standalone build script usage
