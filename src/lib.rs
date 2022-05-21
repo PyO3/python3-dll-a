@@ -93,8 +93,7 @@
 #![deny(missing_docs)]
 #![allow(clippy::needless_doctest_main)]
 
-use std::env;
-use std::fs::{create_dir_all, write};
+use std::fs::{self, create_dir_all, write};
 use std::io::{Error, ErrorKind, Result};
 use std::path::{Path, PathBuf};
 use std::process::Command;
@@ -110,13 +109,6 @@ const DLLTOOL_GNU: &str = "x86_64-w64-mingw32-dlltool";
 
 /// Canonical MinGW-w64 `dlltool` program name (32-bit version)
 const DLLTOOL_GNU_32: &str = "i686-w64-mingw32-dlltool";
-
-/// Canonical `dlltool` program name for the MSVC environment ABI (LLVM dlltool)
-const DLLTOOL_MSVC: &str = "llvm-dlltool";
-
-/// Canonical `lib` program name for the MSVC environment ABI (MSVC lib.exe)
-#[cfg(windows)]
-const LIB_MSVC: &str = "lib.exe";
 
 /// Windows import library generator for Python
 ///
@@ -204,20 +196,7 @@ impl ImportLibraryGenerator {
         let implib_file = self.implib_file_path(out_dir, implib_ext);
 
         // Build the complete `dlltool` command with all required arguments.
-        let mut command = dlltool_command.build(&defpath, &implib_file);
-
-        // Run the selected `dlltool` executable to generate the import library.
-        let status = command.status().map_err(|e| {
-            let msg = format!("{:?} failed with {}", command, e);
-            Error::new(e.kind(), msg)
-        })?;
-
-        if status.success() {
-            Ok(())
-        } else {
-            let msg = format!("{:?} failed with {}", command, status);
-            Err(Error::new(ErrorKind::Other, msg))
-        }
+        dlltool_command.build(&defpath, &implib_file)
     }
 
     /// Writes out the embedded Python library definitions file to `out_dir`.
@@ -285,30 +264,12 @@ enum DllToolCommand {
     /// MinGW `dlltool` program (with prefix)
     Mingw { command: Command },
     /// LLVM `llvm-dlltool` program (no prefix)
-    Llvm { command: Command, machine: String },
-    /// MSVC `lib.exe` program (no prefix)
-    LibExe { command: Command, machine: String },
-    /// `zig dlltool` wrapper (no prefix)
-    Zig { command: Command, machine: String },
+    Llvm { machine: implib::MachineType },
 }
 
 impl DllToolCommand {
     /// Attempts to find the best matching `dlltool` flavor for the target.
     fn find_for_target(arch: &str, env: &str) -> Result<DllToolCommand> {
-        // LLVM tools use their own target architecture names...
-        let machine = match arch {
-            "x86_64" => "i386:x86-64",
-            "x86" => "i386",
-            "aarch64" => "arm64",
-            arch => arch,
-        }
-        .to_owned();
-
-        // If `zig cc` is used as the linker, `zig dlltool` is the best choice.
-        if let Some(command) = find_zig() {
-            return Ok(DllToolCommand::Zig { command, machine });
-        }
-
         match (arch, env) {
             // 64-bit MinGW-w64 (aka `x86_64-pc-windows-gnu`)
             ("x86_64", "gnu") => Ok(DllToolCommand::Mingw {
@@ -322,22 +283,19 @@ impl DllToolCommand {
 
             // MSVC ABI (multiarch)
             (_, "msvc") => {
-                if let Some(command) = find_lib_exe(arch) {
-                    // MSVC tools use their own target architecture names...
-                    let machine = match arch {
-                        "x86_64" => "X64",
-                        "x86" => "X86",
-                        "aarch64" => "ARM64",
-                        arch => arch,
+                let machine = match arch {
+                    "x86_64" => implib::MachineType::AMD64,
+                    "x86" => implib::MachineType::I386,
+                    "aarch64" => implib::MachineType::ARM64,
+                    "arm" => implib::MachineType::ARMNT,
+                    _ => {
+                        return Err(Error::new(
+                            ErrorKind::Other,
+                            format!("Unsupported target arch '{}'", arch),
+                        ))
                     }
-                    .to_owned();
-
-                    Ok(DllToolCommand::LibExe { command, machine })
-                } else {
-                    let command = Command::new(DLLTOOL_MSVC);
-
-                    Ok(DllToolCommand::Llvm { command, machine })
-                }
+                };
+                Ok(DllToolCommand::Llvm { machine })
             }
             _ => {
                 let msg = format!("Unsupported target arch '{}' or env ABI '{}'", arch, env);
@@ -357,7 +315,7 @@ impl DllToolCommand {
     }
 
     /// Generates the complete `dlltool` executable invocation command.
-    fn build(self, defpath: &Path, libpath: &Path) -> Command {
+    fn build(self, defpath: &Path, libpath: &Path) -> Result<()> {
         match self {
             Self::Mingw { mut command } => {
                 command
@@ -366,90 +324,28 @@ impl DllToolCommand {
                     .arg("--output-lib")
                     .arg(libpath);
 
-                command
-            }
-            Self::Llvm {
-                mut command,
-                machine,
-            } => {
-                command
-                    .arg("-m")
-                    .arg(machine)
-                    .arg("-d")
-                    .arg(defpath)
-                    .arg("-l")
-                    .arg(libpath);
+                // Run the selected `dlltool` executable to generate the import library.
+                let status = command.status().map_err(|e| {
+                    let msg = format!("{:?} failed with {}", command, e);
+                    Error::new(e.kind(), msg)
+                })?;
 
-                command
+                if status.success() {
+                    Ok(())
+                } else {
+                    let msg = format!("{:?} failed with {}", command, status);
+                    Err(Error::new(ErrorKind::Other, msg))
+                }
             }
-            Self::LibExe {
-                mut command,
-                machine,
-            } => {
-                command
-                    .arg(format!("/MACHINE:{}", machine))
-                    .arg(format!("/DEF:{}", defpath.display()))
-                    .arg(format!("/OUT:{}", libpath.display()));
-
-                command
-            }
-            Self::Zig {
-                mut command,
-                machine,
-            } => {
-                // Same as `llvm-dlltool`, but invoked as `zig dlltool`.
-                command
-                    .arg("dlltool")
-                    .arg("-m")
-                    .arg(machine)
-                    .arg("-d")
-                    .arg(defpath)
-                    .arg("-l")
-                    .arg(libpath);
-
-                command
+            Self::Llvm { machine } => {
+                let def = fs::read_to_string(defpath)?;
+                let mut file = fs::File::create(libpath)?;
+                let import_lib = implib::ImportLibrary::new(&def, machine)?;
+                import_lib.write_to(&mut file)?;
+                Ok(())
             }
         }
     }
-}
-
-/// Finds the `zig` executable (when built by ``maturin --zig`).
-///
-/// Examines the `ZIG_COMMAND` environment variable
-/// to find out if `zig cc` is being used as the linker.
-fn find_zig() -> Option<Command> {
-    // `ZIG_COMMAND` may contain simply `zig` or `/usr/bin/zig`,
-    // or a more complex construct like `python3 -m ziglang`.
-    let zig_command = env::var("ZIG_COMMAND").ok()?;
-
-    // Try to emulate `sh -c ${ZIG_COMMAND}`.
-    let mut zig_cmdlet = zig_command.split_ascii_whitespace();
-
-    // Extract the main program component (e.g. `zig` or `python3`).
-    let mut zig = Command::new(zig_cmdlet.next()?);
-
-    // Append the rest of the commandlet.
-    zig.args(zig_cmdlet);
-
-    Some(zig)
-}
-
-/// Finds Visual Studio `lib.exe` when running on Windows.
-#[cfg(windows)]
-fn find_lib_exe(arch: &str) -> Option<Command> {
-    let target = match arch {
-        "x86_64" => "x86_64-pc-windows-msvc",
-        "x86" => "i686-pc-windows-msvc",
-        "aarch64" => "aarch64-pc-windows-msvc",
-        _ => return None,
-    };
-
-    cc::windows_registry::find(target, LIB_MSVC)
-}
-
-#[cfg(not(windows))]
-fn find_lib_exe(_arch: &str) -> Option<Command> {
-    None
 }
 
 #[cfg(test)]
