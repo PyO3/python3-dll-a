@@ -716,6 +716,7 @@ PyBuffer_Release
 PyMemoryView_FromBuffer
 PyErr_GetHandledException
 PyErr_SetHandledException
+PyType_FromMetaclass
 PyBaseObject_Type DATA
 PyBool_Type DATA
 PyByteArrayIter_Type DATA
