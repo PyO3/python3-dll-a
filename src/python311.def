@@ -1219,6 +1219,8 @@ _PyImport_FixupExtensionObject
 _PyImport_FrozenBootstrap DATA
 _PyImport_FrozenStdlib DATA
 _PyImport_FrozenTest DATA
+_PyImport_GetModuleAttr
+_PyImport_GetModuleAttrString
 _PyImport_GetModuleId
 _PyImport_IsInitialized
 _PyImport_ReleaseLock
