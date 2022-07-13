@@ -54,7 +54,7 @@ jobs:
       shell: bash
       run: |
         set -e
-        for f in dll/python*.dll; do
+        for f in dll/*.dll; do
           gendef $f
         done
         ls -lrth *.def
@@ -65,6 +65,6 @@ jobs:
         branch: update-pythonxy
         delete-branch: true
         add-paths: |
-          src/python*.def
+          src/*.def
         title: 'Update pythonXY.def'
         commit-message: 'chore: Update pythonXY.def'
