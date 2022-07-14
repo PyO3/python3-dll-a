@@ -2,6 +2,14 @@
 
 All notable changes to this project will be documented in this file.
 
+## Unreleased
+
+## [0.2.4] - 2022-07-14
+
+### Features
+
+- Add PyPy support in [#25](https://github.com/PyO3/python3-dll-a/pull/25)
+
 ## [0.2.3] - 2022-05-17
 
 ### Features
