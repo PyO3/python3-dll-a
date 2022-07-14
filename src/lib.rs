@@ -274,19 +274,11 @@ impl ImportLibraryGenerator {
     ///
     /// Returns the full import library file path under `out_dir`.
     fn implib_file_path(&self, out_dir: &Path, libext: &str) -> PathBuf {
-        let libname = match self.implementation {
-            PythonImplementation::CPython => match self.version {
-                Some((major, minor)) => {
-                    format!("python{}{}{}", major, minor, libext)
-                }
-                None => format!("python3{}", libext),
-            },
-            PythonImplementation::PyPy => match self.version {
-                Some((major, minor)) if (major, minor) >= (3, 9) => {
-                    format!("libpypy{}.{}-c{}", major, minor, libext)
-                }
-                _ => format!("libpypy3-c{}", libext),
-            },
+        let libname = match self.version {
+            Some((major, minor)) => {
+                format!("python{}{}{}", major, minor, libext)
+            }
+            None => format!("python3{}", libext),
         };
 
         let mut libpath = out_dir.to_owned();
