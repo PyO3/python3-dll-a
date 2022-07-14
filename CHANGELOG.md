@@ -4,6 +4,12 @@ All notable changes to this project will be documented in this file.
 
 ## Unreleased
 
+## [0.2.5] - 2022-07-14
+
+### Fixes
+
+- Fix PyPy import library name in [#27](https://github.com/PyO3/python3-dll-a/pull/27)
+
 ## [0.2.4] - 2022-07-14
 
 ### Features
