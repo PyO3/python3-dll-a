@@ -81,7 +81,10 @@ PyClassMethod_New
 PyClassMethod_Type DATA
 PyCode_Addr2Line
 PyCode_Addr2Location
+PyCode_GetCellvars
 PyCode_GetCode
+PyCode_GetFreevars
+PyCode_GetVarnames
 PyCode_New
 PyCode_NewEmpty
 PyCode_NewWithPosOnlyArgs
