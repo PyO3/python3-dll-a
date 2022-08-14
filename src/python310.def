@@ -1218,6 +1218,8 @@ _PyImport_AcquireLock
 _PyImport_FindExtensionObject
 _PyImport_FixupBuiltin
 _PyImport_FixupExtensionObject
+_PyImport_GetModuleAttr
+_PyImport_GetModuleAttrString
 _PyImport_GetModuleId
 _PyImport_IsInitialized
 _PyImport_ReleaseLock
