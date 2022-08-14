@@ -717,6 +717,8 @@ PyMemoryView_FromBuffer
 PyErr_GetHandledException
 PyErr_SetHandledException
 PyType_FromMetaclass
+PyVectorcall_NARGS
+PyVectorcall_Call
 PyBaseObject_Type DATA
 PyBool_Type DATA
 PyByteArrayIter_Type DATA
