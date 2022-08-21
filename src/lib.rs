@@ -8,6 +8,11 @@
 //! This crate **does not require** Python 3 distribution files
 //! to be present on the (cross-)compile host system.
 //!
+//! This crate uses the binutils `dlltool` program to generate
+//! the Python DLL import libraries for MinGW-w64 targets.
+//! Setting `PYO3_MINGW_DLLTOOL` environment variable overrides
+//! the default `dlltool` command name for the target.
+//!
 //! **Note:** MSVC cross-compile targets require either LLVM binutils
 //! or Zig to be available on the host system.
 //! More specifically, `python3-dll-a` requires `llvm-dlltool` executable
@@ -335,19 +340,14 @@ impl DllToolCommand {
             return Ok(DllToolCommand::Zig { command, machine });
         }
 
-        match (arch, env) {
-            // 64-bit MinGW-w64 (aka `x86_64-pc-windows-gnu`)
-            ("x86_64", "gnu") => Ok(DllToolCommand::Mingw {
-                command: Command::new(DLLTOOL_GNU),
-            }),
-
-            // 32-bit MinGW-w64 (aka `i686-pc-windows-gnu`)
-            ("x86", "gnu") => Ok(DllToolCommand::Mingw {
-                command: Command::new(DLLTOOL_GNU_32),
+        match env {
+            // 64-bit and 32-bit MinGW-w64 (aka `{x86_64,i686}-pc-windows-gnu`)
+            "gnu" => Ok(DllToolCommand::Mingw {
+                command: get_mingw_dlltool(arch)?,
             }),
 
             // MSVC ABI (multiarch)
-            (_, "msvc") => {
+            "msvc" => {
                 if let Some(command) = find_lib_exe(arch) {
                     // MSVC tools use their own target architecture names...
                     let machine = match arch {
@@ -366,7 +366,7 @@ impl DllToolCommand {
                 }
             }
             _ => {
-                let msg = format!("Unsupported target arch '{}' or env ABI '{}'", arch, env);
+                let msg = format!("Unsupported target env ABI '{}'", env);
                 Err(Error::new(ErrorKind::Other, msg))
             }
         }
@@ -436,6 +436,31 @@ impl DllToolCommand {
                 command
             }
         }
+    }
+}
+
+/// Chooses the appropriate MinGW-w64 `dlltool` executable
+/// for the target architecture.
+///
+/// Examines the user-provided `PYO3_MINGW_DLLTOOL` environment variable first
+/// and falls back to the default MinGW-w64 arch prefixes.
+fn get_mingw_dlltool(arch: &str) -> Result<Command> {
+    if let Ok(user_dlltool) = env::var("PYO3_MINGW_DLLTOOL") {
+        Ok(Command::new(&user_dlltool))
+    } else {
+        let prefix_dlltool = match arch {
+            // 64-bit MinGW-w64 (aka `x86_64-pc-windows-gnu`)
+            "x86_64" => Ok(DLLTOOL_GNU),
+            // 32-bit MinGW-w64 (aka `i686-pc-windows-gnu`)
+            "x86" => Ok(DLLTOOL_GNU_32),
+            // AArch64?
+            _ => {
+                let msg = format!("Unsupported MinGW target arch '{}'", arch);
+                Err(Error::new(ErrorKind::Other, msg))
+            }
+        }?;
+
+        Ok(Command::new(prefix_dlltool))
     }
 }
 
