@@ -8,6 +8,11 @@ for MinGW-w64 and MSVC (cross-)compile targets.
 This crate **does not require** Python 3 distribution files
 to be present on the (cross-)compile host system.
 
+This crate uses the binutils `dlltool` program to generate
+the Python DLL import libraries for MinGW-w64 targets.
+Setting `PYO3_MINGW_DLLTOOL` environment variable overrides
+the default `dlltool` command name for the target.
+
 **Note:** MSVC cross-compile targets require either LLVM binutils
 or Zig to be available on the host system.
 More specifically, `python3-dll-a` requires `llvm-dlltool` executable
