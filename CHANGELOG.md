@@ -2,7 +2,11 @@
 
 All notable changes to this project will be documented in this file.
 
-## Unreleased
+## [0.2.6] - 2022-08-21
+
+### Features
+
+- Add MinGW-w64 `dlltool` program name configuration env var [#31](https://github.com/PyO3/python3-dll-a/pull/31)
 
 ## [0.2.5] - 2022-07-14
 
