@@ -719,6 +719,8 @@ PyErr_SetHandledException
 PyType_FromMetaclass
 PyVectorcall_NARGS
 PyVectorcall_Call
+PyObject_Vectorcall
+PyObject_VectorcallMethod
 PyBaseObject_Type DATA
 PyBool_Type DATA
 PyByteArrayIter_Type DATA
