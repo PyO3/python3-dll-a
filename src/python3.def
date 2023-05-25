@@ -94,6 +94,7 @@ PyErr_BadInternalCall
 PyErr_CheckSignals
 PyErr_Clear
 PyErr_Display
+PyErr_DisplayException
 PyErr_ExceptionMatches
 PyErr_Fetch
 PyErr_Format
@@ -719,8 +720,14 @@ PyErr_SetHandledException
 PyType_FromMetaclass
 PyVectorcall_NARGS
 PyVectorcall_Call
+PyErr_GetRaisedException
+PyErr_SetRaisedException
+PyException_GetArgs
+PyException_SetArgs
 PyObject_Vectorcall
 PyObject_VectorcallMethod
+PyObject_GetTypeData
+PyType_GetTypeDataSize
 PyBaseObject_Type DATA
 PyBool_Type DATA
 PyByteArrayIter_Type DATA
