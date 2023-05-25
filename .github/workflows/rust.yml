@@ -34,7 +34,7 @@ jobs:
     - uses: actions/checkout@v3
     - uses: goto-bus-stop/setup-zig@v1
       with:
-        version: 0.9.1
+        version: 0.10.1
     - name: Run tests with zig
       run: ZIG_COMMAND=zig cargo test --verbose
   zigwheel:
@@ -44,7 +44,7 @@ jobs:
     - uses: actions/checkout@v3
     - uses: actions/setup-python@v4
       with:
-        python-version: "3.10"
+        python-version: "3.11"
     - name: Install ziglang package
       run: pip install ziglang
     - name: Run tests with python -m ziglang
