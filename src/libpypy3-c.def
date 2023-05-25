@@ -67,6 +67,7 @@ PyPyCapsule_Type DATA
 PyPyCell_Type DATA
 PyPyClassMethodDescr_Type DATA
 PyPyClassMethod_New
+PyPyClassMethod_Type DATA
 PyPyCode_Addr2Line
 PyPyCode_Check
 PyPyCode_CheckExact
@@ -120,10 +121,12 @@ PyPyDelta_CheckExact
 PyPyDescr_NewClassMethod
 PyPyDescr_NewGetSet
 PyPyDescr_NewMethod
+PyPyDictKeys_Type DATA
 PyPyDictProxy_Check
 PyPyDictProxy_CheckExact
 PyPyDictProxy_New
 PyPyDictProxy_Type DATA
+PyPyDictValues_Type DATA
 PyPyDict_Clear
 PyPyDict_Contains
 PyPyDict_Copy
@@ -166,6 +169,7 @@ PyPyErr_SetExcInfo
 PyPyErr_SetFromErrno
 PyPyErr_SetFromErrnoWithFilename
 PyPyErr_SetFromErrnoWithFilenameObject
+PyPyErr_SetFromErrnoWithFilenameObjects
 PyPyErr_SetFromWindowsErr
 PyPyErr_SetInterrupt
 PyPyErr_SetNone
@@ -303,6 +307,7 @@ PyPyInstanceMethod_Function
 PyPyInstanceMethod_GET_FUNCTION
 PyPyInstanceMethod_New
 PyPyInstanceMethod_Type DATA
+PyPyInterpreterState_GetID
 PyPyInterpreterState_Head
 PyPyInterpreterState_Next
 PyPyIter_Check
@@ -511,6 +516,7 @@ PyPyObject_Type
 PyPyObject_Unicode
 PyPyProperty_Type DATA
 PyPyRange_Type DATA
+PyPyReversed_Type DATA
 PyPyRun_File
 PyPyRun_SimpleString
 PyPyRun_String
@@ -556,10 +562,12 @@ PyPySlice_Type DATA
 PyPySlice_Unpack
 PyPyStaticMethod_New
 PyPyStaticMethod_Type DATA
+PyPyStructSequence_GetItem
 PyPyStructSequence_InitType
 PyPyStructSequence_InitType2
 PyPyStructSequence_New
 PyPyStructSequence_NewType
+PyPyStructSequence_SetItem
 PyPyStructSequence_UnnamedField DATA
 PyPySys_GetObject
 PyPySys_SetObject
@@ -573,6 +581,7 @@ PyPyThreadState_DeleteCurrent
 PyPyThreadState_Get
 PyPyThreadState_GetDict
 PyPyThreadState_New
+PyPyThreadState_SetAsyncExc
 PyPyThreadState_Swap
 PyPyThread_ReInitTLS
 PyPyThread_acquire_lock
@@ -612,6 +621,8 @@ PyPyType_IsSubtype
 PyPyType_Modified
 PyPyType_Ready
 PyPyType_Type DATA
+PyPyUnicode_Append
+PyPyUnicode_AppendAndDel
 PyPyUnicode_AsASCIIString
 PyPyUnicode_AsEncodedObject
 PyPyUnicode_AsEncodedString
@@ -648,6 +659,7 @@ PyPyUnicode_DecodeUTF16
 PyPyUnicode_DecodeUTF32
 PyPyUnicode_DecodeUTF8
 PyPyUnicode_EncodeASCII
+PyPyUnicode_EncodeCodePage
 PyPyUnicode_EncodeDecimal
 PyPyUnicode_EncodeFSDefault
 PyPyUnicode_EncodeLatin1
