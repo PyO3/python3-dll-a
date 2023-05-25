@@ -446,7 +446,7 @@ impl DllToolCommand {
 /// and falls back to the default MinGW-w64 arch prefixes.
 fn get_mingw_dlltool(arch: &str) -> Result<Command> {
     if let Ok(user_dlltool) = env::var("PYO3_MINGW_DLLTOOL") {
-        Ok(Command::new(&user_dlltool))
+        Ok(Command::new(user_dlltool))
     } else {
         let prefix_dlltool = match arch {
             // 64-bit MinGW-w64 (aka `x86_64-pc-windows-gnu`)
