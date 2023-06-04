@@ -728,6 +728,8 @@ PyObject_Vectorcall
 PyObject_VectorcallMethod
 PyObject_GetTypeData
 PyType_GetTypeDataSize
+_Py_IncRefTotal_DO_NOT_USE_THIS
+_Py_DecRefTotal_DO_NOT_USE_THIS
 PyBaseObject_Type DATA
 PyBool_Type DATA
 PyByteArrayIter_Type DATA
