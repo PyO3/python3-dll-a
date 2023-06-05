@@ -660,7 +660,9 @@ PyObject_GetAttr
 PyObject_GetAttrString
 PyObject_GetBuffer
 PyObject_GetItem
+PyObject_GetItemData
 PyObject_GetIter
+PyObject_GetTypeData
 PyObject_HasAttr
 PyObject_HasAttrString
 PyObject_Hash
@@ -866,6 +868,7 @@ PyType_GetModuleState
 PyType_GetName
 PyType_GetQualName
 PyType_GetSlot
+PyType_GetTypeDataSize
 PyType_IsSubtype
 PyType_Modified
 PyType_Ready
@@ -995,6 +998,16 @@ PyUnstable_Code_NewWithPosOnlyArgs
 PyUnstable_Code_SetExtra
 PyUnstable_Eval_RequestCodeExtraIndex
 PyUnstable_GC_VisitObjects
+PyUnstable_InterpreterFrame_GetCode
+PyUnstable_InterpreterFrame_GetLasti
+PyUnstable_InterpreterFrame_GetLine
+PyUnstable_Long_CompactValue
+PyUnstable_Long_IsCompact
+PyUnstable_Object_GC_NewWithExtraData
+PyUnstable_PerfMapState_Fini
+PyUnstable_PerfMapState_Init
+PyUnstable_Type_AssignVersionTag
+PyUnstable_WritePerfMapEntry
 PyVectorcall_Call
 PyVectorcall_Function
 PyVectorcall_NARGS
@@ -1068,6 +1081,7 @@ Py_LegacyWindowsStdioFlag DATA
 Py_Main
 Py_MakePendingCalls
 Py_NewInterpreter
+Py_NewInterpreterFromConfig
 Py_NewRef
 Py_NoSiteFlag DATA
 Py_NoUserSiteDirectory DATA
@@ -1122,8 +1136,8 @@ _PyArgv_AsWstrList
 _PyAsyncGenASend_Type DATA
 _PyAsyncGenAThrow_Type DATA
 _PyAsyncGenWrappedValue_Type DATA
+_PyBufferWrapper_Type DATA
 _PyByteArray_empty_string DATA
-_PyBytesIOBuffer_Type DATA
 _PyBytesWriter_Alloc
 _PyBytesWriter_Dealloc
 _PyBytesWriter_Finish
@@ -1149,6 +1163,7 @@ _PyCodec_DecodeText
 _PyCodec_EncodeText
 _PyCodec_Lookup
 _PyCodec_LookupTextEncoding
+_PyCompile_Assemble
 _PyCompile_CodeGen
 _PyCompile_OptimizeCfg
 _PyConfig_AsDict
@@ -1391,13 +1406,13 @@ _PySlice_FromIndices
 _PySlice_GetLongIndices
 _PyStack_AsDict
 _PyState_AddModule
-_PyStructSequence_InitBuiltinWithFlags
 _PyStructSequence_NewType
 _PySys_GetAttr
 _PySys_GetSizeOf
 _PyThreadState_Bind
 _PyThreadState_DeleteCurrent
 _PyThreadState_DeleteExcept
+_PyThreadState_GetCurrent
 _PyThreadState_GetDict
 _PyThreadState_Init
 _PyThreadState_New
@@ -1439,7 +1454,18 @@ _PyToken_ThreeChars
 _PyToken_TwoChars
 _PyTraceBack_FromFrame
 _PyTraceBack_Print_Indented
+_PyTraceMalloc_ClearTraces
+_PyTraceMalloc_GetMemory
+_PyTraceMalloc_GetObjectTraceback
 _PyTraceMalloc_GetTraceback
+_PyTraceMalloc_GetTracebackLimit
+_PyTraceMalloc_GetTracedMemory
+_PyTraceMalloc_GetTraces
+_PyTraceMalloc_Init
+_PyTraceMalloc_IsTracing
+_PyTraceMalloc_ResetPeak
+_PyTraceMalloc_Start
+_PyTraceMalloc_Stop
 _PyTraceback_Add
 _PyTrash_begin
 _PyTrash_cond
@@ -1449,6 +1475,7 @@ _PyTuple_MaybeUntrack
 _PyTuple_Resize
 _PyType_CalculateMetaclass
 _PyType_CheckConsistency
+_PyType_GetDict
 _PyType_GetDocFromInternalDoc
 _PyType_GetTextSignatureFromInternalDoc
 _PyType_Lookup
@@ -1529,6 +1556,7 @@ _PyWideStringList_AsList
 _PyWideStringList_Clear
 _PyWideStringList_Copy
 _PyWideStringList_Extend
+_Py_AtExit
 _Py_BreakPoint
 _Py_BuildValue_SizeT
 _Py_CheckFunctionResult
@@ -1558,7 +1586,6 @@ _Py_FatalErrorFunc
 _Py_FatalRefcountErrorFunc
 _Py_FdIsInteractive
 _Py_FreeCharPArray
-_Py_GetAllocatedBlocks
 _Py_GetConfig
 _Py_GetConfigsAsDict
 _Py_GetEnv
@@ -1579,9 +1606,9 @@ _Py_IncRef
 _Py_InitializeMain
 _Py_IsCoreInitialized
 _Py_IsFinalizing
+_Py_IsInterpreterFinalizing
 _Py_IsLocaleCoercionTarget
 _Py_LegacyLocaleDetected
-_Py_NewInterpreterFromConfig
 _Py_NewReference
 _Py_NewReferenceNoTotal
 _Py_NoneStruct DATA
@@ -1620,8 +1647,6 @@ _Py_ctype_toupper DATA
 _Py_device_encoding
 _Py_dg_dtoa
 _Py_dg_freedtoa
-_Py_dg_infinity
-_Py_dg_stdnan
 _Py_dg_strtod
 _Py_dup
 _Py_fopen_obj
