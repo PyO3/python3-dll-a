@@ -728,6 +728,8 @@ PyObject_Vectorcall
 PyObject_VectorcallMethod
 PyObject_GetTypeData
 PyType_GetTypeDataSize
+PyImport_AddModuleRef
+PyWeakref_GetRef
 PyBaseObject_Type DATA
 PyBool_Type DATA
 PyByteArrayIter_Type DATA
