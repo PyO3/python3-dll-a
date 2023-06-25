@@ -1240,6 +1240,7 @@ _PyEval_EvalFrameDefault
 _PyEval_GetBuiltin
 _PyEval_GetBuiltinId
 _PyEval_GetSwitchInterval
+_PyEval_MakePendingCalls
 _PyEval_SetProfile
 _PyEval_SetSwitchInterval
 _PyEval_SetTrace

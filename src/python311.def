@@ -1564,6 +1564,7 @@ _Py_SwappedOp DATA
 _Py_TrueStruct DATA
 _Py_UTF8_Edit_Cost
 _Py_UnhandledKeyboardInterrupt DATA
+_Py_UniversalNewlineFgetsWithSize
 _Py_VaBuildStack
 _Py_VaBuildStack_SizeT
 _Py_VaBuildValue_SizeT
