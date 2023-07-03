@@ -18,6 +18,9 @@ jobs:
           python-version: "pypy3.9"
       - uses: actions/setup-python@v4
         with:
+          python-version: "pypy3.10"
+      - uses: actions/setup-python@v4
+        with:
           python-version: "3.7"
       - uses: actions/setup-python@v4
         with:
@@ -49,7 +52,7 @@ jobs:
           cp "$PREFIX/libpypy3-c.dll" .
 
           # PyPy 3.9 and later use libpypy3.Y-c.dll
-          for VER in 3.9; do
+          for VER in 3.9 3.10; do
             VER_NUM=$(echo $VER | sed 's/\.//')
             PREFIX=$(pypy$VER -c "import sys; print(sys.base_prefix, end='')")
             cp "$PREFIX/libpypy$VER-c.dll" .
