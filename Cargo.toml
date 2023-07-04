@@ -1,6 +1,6 @@
 [package]
 name = "python3-dll-a"
-version = "0.2.8"
+version = "0.2.9"
 edition = "2021"
 description = "Standalone python3(y).dll import library generator"
 repository = "https://github.com/PyO3/python3-dll-a"
