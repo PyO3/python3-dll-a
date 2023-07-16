@@ -861,6 +861,7 @@ PyType_FromSpec
 PyType_FromSpecWithBases
 PyType_GenericAlloc
 PyType_GenericNew
+PyType_GetDict
 PyType_GetFlags
 PyType_GetModule
 PyType_GetModuleByDef
