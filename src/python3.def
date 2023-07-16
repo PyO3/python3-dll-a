@@ -730,6 +730,12 @@ PyObject_GetTypeData
 PyType_GetTypeDataSize
 PyImport_AddModuleRef
 PyWeakref_GetRef
+PyObject_DelAttr
+PyObject_DelAttrString
+PyObject_GetOptionalAttr
+PyObject_GetOptionalAttrString
+PyMapping_GetOptionalItem
+PyMapping_GetOptionalItemString
 PyBaseObject_Type DATA
 PyBool_Type DATA
 PyByteArrayIter_Type DATA
