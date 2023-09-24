@@ -1284,6 +1284,7 @@ _PyMem_SetupAllocators
 _PyMem_Strdup
 _PyMethodWrapper_Type DATA
 _PyModuleSpec_IsInitializing
+_PyModule_Add
 _PyModule_Clear
 _PyModule_ClearDict
 _PyModule_CreateInitialized
