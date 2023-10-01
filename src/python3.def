@@ -856,6 +856,7 @@ _Py_NoneStruct DATA
 _Py_NotImplementedStruct DATA
 _Py_SwappedOp DATA
 _Py_TrueStruct DATA
+PY_TIMEOUT_MAX DATA
 PyModuleDef_Type DATA
 PyExc_ModuleNotFoundError DATA
 PyExc_BlockingIOError DATA
