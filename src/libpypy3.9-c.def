@@ -899,6 +899,7 @@ _PyPyImport_AcquireLock
 _PyPyImport_ReleaseLock
 _PyPyList_Extend
 _PyPyLong_AsByteArrayO
+_PyPyLong_AsInt
 _PyPyLong_FromByteArray
 _PyPyLong_NumBits
 _PyPyLong_Sign
