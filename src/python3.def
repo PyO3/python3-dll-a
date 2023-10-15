@@ -745,6 +745,8 @@ PyObject_HasAttrStringWithError
 PyMapping_HasKeyWithError
 PyMapping_HasKeyStringWithError
 Py_IsFinalizing
+PyUnicode_EqualToUTF8
+PyUnicode_EqualToUTF8AndSize
 PyBaseObject_Type DATA
 PyBool_Type DATA
 PyByteArrayIter_Type DATA
