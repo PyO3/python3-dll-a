@@ -747,6 +747,13 @@ PyMapping_HasKeyStringWithError
 Py_IsFinalizing
 PyUnicode_EqualToUTF8
 PyUnicode_EqualToUTF8AndSize
+PyMem_RawMalloc
+PyMem_RawCalloc
+PyMem_RawRealloc
+PyMem_RawFree
+PySys_Audit
+PySys_AuditTuple
+PyUnicode_AsUTF8
 PyBaseObject_Type DATA
 PyBool_Type DATA
 PyByteArrayIter_Type DATA
