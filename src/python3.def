@@ -754,6 +754,7 @@ PyMem_RawFree
 PySys_Audit
 PySys_AuditTuple
 PyUnicode_AsUTF8
+_Py_SetRefcnt
 PyBaseObject_Type DATA
 PyBool_Type DATA
 PyByteArrayIter_Type DATA
