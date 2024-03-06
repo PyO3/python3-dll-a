@@ -5,7 +5,10 @@
 ;
 LIBRARY "libpypy3.9-c.dll"
 EXPORTS
+HPyInitGlobalContext__debug
+HPyInitGlobalContext__trace
 HPyInit__debug
+HPyInit__trace
 PyArg_ValidateKeywordArguments
 PyModule_AddType
 PyPyAnySet_Check
@@ -157,6 +160,7 @@ PyPyErr_Display
 PyPyErr_ExceptionMatches
 PyPyErr_Fetch
 PyPyErr_Format
+PyPyErr_FormatV
 PyPyErr_GetExcInfo
 PyPyErr_GivenExceptionMatches
 PyPyErr_NewException
@@ -167,12 +171,15 @@ PyPyErr_Occurred
 PyPyErr_Print
 PyPyErr_PrintEx
 PyPyErr_Restore
+PyPyErr_SetExcFromWindowsErrWithFilenameObject
+PyPyErr_SetExcFromWindowsErrWithFilenameObjects
 PyPyErr_SetExcInfo
 PyPyErr_SetFromErrno
 PyPyErr_SetFromErrnoWithFilename
 PyPyErr_SetFromErrnoWithFilenameObject
 PyPyErr_SetFromErrnoWithFilenameObjects
 PyPyErr_SetFromWindowsErr
+PyPyErr_SetFromWindowsErrWithFilename
 PyPyErr_SetInterrupt
 PyPyErr_SetNone
 PyPyErr_SetObject
@@ -974,12 +981,20 @@ _PyTime_ObjectToTimeval
 _PyTime_gmtime
 _PyTime_localtime
 _PyType_Name
+_Py_VaBuildStack
+_Py_VaBuildStack_SizeT
+_pypy_init_executable
 _pypy_init_free
 _pypy_init_home
+get_required_hpy_major_version__debug
+get_required_hpy_major_version__trace
+get_required_hpy_minor_version__debug
+get_required_hpy_minor_version__trace
 os_readlink_impl
 os_symlink_impl
 os_unlink_impl
 pypy_HPyInit__debug
+pypy_HPyInit__trace
 pypy_carefully_make_gil
 pypy_debug_file DATA
 pypy_execute_source
@@ -990,6 +1005,10 @@ pypy_hpy_debug_get_ctx
 pypy_hpy_debug_open_handle
 pypy_hpy_debug_set_ctx
 pypy_hpy_debug_unwrap_handle
+pypy_hpy_trace_ctx_init
+pypy_hpy_trace_get_ctx
+pypy_hpy_trace_get_func_name
+pypy_hpy_trace_get_nfunc
 pypy_init_embedded_cffi_module
 pypy_init_threads
 pypy_main_startup
