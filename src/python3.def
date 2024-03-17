@@ -755,6 +755,8 @@ PySys_Audit
 PySys_AuditTuple
 _Py_SetRefcnt
 PyList_GetItemRef
+PyType_GetFullyQualifiedName
+PyType_GetModuleName
 PyBaseObject_Type DATA
 PyBool_Type DATA
 PyByteArrayIter_Type DATA
