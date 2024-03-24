@@ -757,6 +757,8 @@ _Py_SetRefcnt
 PyList_GetItemRef
 PyType_GetFullyQualifiedName
 PyType_GetModuleName
+Py_GetConstant
+Py_GetConstantBorrowed
 PyBaseObject_Type DATA
 PyBool_Type DATA
 PyByteArrayIter_Type DATA
