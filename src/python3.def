@@ -759,6 +759,7 @@ PyType_GetFullyQualifiedName
 PyType_GetModuleName
 Py_GetConstant
 Py_GetConstantBorrowed
+PyType_GetModuleByDef
 PyBaseObject_Type DATA
 PyBool_Type DATA
 PyByteArrayIter_Type DATA
