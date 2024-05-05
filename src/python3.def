@@ -760,6 +760,9 @@ PyType_GetModuleName
 Py_GetConstant
 Py_GetConstantBorrowed
 PyType_GetModuleByDef
+PyEval_GetFrameBuiltins
+PyEval_GetFrameGlobals
+PyEval_GetFrameLocals
 PyBaseObject_Type DATA
 PyBool_Type DATA
 PyByteArrayIter_Type DATA
