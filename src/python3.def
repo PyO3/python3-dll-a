@@ -763,6 +763,7 @@ PyType_GetModuleByDef
 PyEval_GetFrameBuiltins
 PyEval_GetFrameGlobals
 PyEval_GetFrameLocals
+Py_TYPE
 PyBaseObject_Type DATA
 PyBool_Type DATA
 PyByteArrayIter_Type DATA
