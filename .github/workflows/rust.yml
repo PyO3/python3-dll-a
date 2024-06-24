@@ -2,7 +2,6 @@ name: Test
 
 on:
   push:
-    branches: [ main ]
   pull_request:
     branches: [ main ]
 
@@ -19,7 +18,7 @@ jobs:
           - windows-latest
     runs-on: ${{ matrix.os }}
     steps:
-    - uses: actions/checkout@v3
+    - uses: actions/checkout@v4
     - name: Install the MinGW and LLVM toolchains
       if: matrix.os == 'ubuntu-latest'
       run: sudo apt-get install -y gcc-mingw-w64 llvm
@@ -31,20 +30,18 @@ jobs:
     name: Test zig dlltool
     runs-on: ubuntu-latest
     steps:
-    - uses: actions/checkout@v3
-    - uses: goto-bus-stop/setup-zig@v1
-      with:
-        version: 0.10.1
+    - uses: actions/checkout@v4
+    - uses: goto-bus-stop/setup-zig@v2
     - name: Run tests with zig
       run: ZIG_COMMAND=zig cargo test --verbose
   zigwheel:
     name: Test python -m ziglang dlltool
     runs-on: ubuntu-latest
     steps:
-    - uses: actions/checkout@v3
-    - uses: actions/setup-python@v4
+    - uses: actions/checkout@v4
+    - uses: actions/setup-python@v5
       with:
-        python-version: "3.11"
+        python-version: "3.12"
     - name: Install ziglang package
       run: pip install ziglang
     - name: Run tests with python -m ziglang
@@ -53,13 +50,13 @@ jobs:
     name: Check code formatting
     runs-on: ubuntu-latest
     steps:
-    - uses: actions/checkout@v3
+    - uses: actions/checkout@v4
     - name: Run cargo fmt
       run: cargo fmt -- --check
   clippy:
     name: Clippy lints
     runs-on: ubuntu-latest
     steps:
-    - uses: actions/checkout@v3
+    - uses: actions/checkout@v4
     - name: Run cargo clippy
       run: cargo clippy --tests -- --deny warnings
