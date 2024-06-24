@@ -907,4 +907,3 @@ PyExc_EncodingWarning DATA
 _Py_RefTotal DATA
 PyStructSequence_UnnamedField DATA
 Py_Version DATA
-PyExc_IncompleteInputError DATA
