@@ -256,6 +256,7 @@ impl ImportLibraryGenerator {
                 Some((3, 10)) => ("python310.def", include_str!("python310.def")),
                 Some((3, 11)) => ("python311.def", include_str!("python311.def")),
                 Some((3, 12)) => ("python312.def", include_str!("python312.def")),
+                Some((3, 13)) => ("python313.def", include_str!("python313.def")),
                 _ => return Err(Error::new(ErrorKind::Other, "Unsupported Python version")),
             },
             PythonImplementation::PyPy => match self.version {
@@ -524,7 +525,7 @@ mod tests {
             .generate(&dir)
             .unwrap();
 
-        for minor in 7..=12 {
+        for minor in 7..=13 {
             ImportLibraryGenerator::new("x86_64", "gnu")
                 .version(Some((3, minor)))
                 .generate(&dir)
@@ -563,7 +564,7 @@ mod tests {
             .generate(&dir)
             .unwrap();
 
-        for minor in 7..=12 {
+        for minor in 7..=13 {
             ImportLibraryGenerator::new("x86_64", "msvc")
                 .version(Some((3, minor)))
                 .generate(&dir)
