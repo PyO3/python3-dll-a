@@ -2,6 +2,12 @@
 
 All notable changes to this project will be documented in this file.
 
+## [0.2.10] - 2024-06-24
+
+### Features
+
+- Add Python 3.13 support in [#72](https://github.com/PyO3/python3-dll-a/pull/72)
+
 ## [0.2.9] - 2023-07-04
 
 ### Fixes
