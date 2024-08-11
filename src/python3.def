@@ -764,6 +764,7 @@ PyEval_GetFrameBuiltins
 PyEval_GetFrameGlobals
 PyEval_GetFrameLocals
 Py_TYPE
+PyIter_NextItem
 PyBaseObject_Type DATA
 PyBool_Type DATA
 PyByteArrayIter_Type DATA
