@@ -765,6 +765,14 @@ PyEval_GetFrameGlobals
 PyEval_GetFrameLocals
 Py_TYPE
 PyIter_NextItem
+PyLong_FromInt32
+PyLong_FromUInt32
+PyLong_AsInt32
+PyLong_AsUInt32
+PyLong_FromInt64
+PyLong_FromUInt64
+PyLong_AsInt64
+PyLong_AsUInt64
 PyBaseObject_Type DATA
 PyBool_Type DATA
 PyByteArrayIter_Type DATA
