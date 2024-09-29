@@ -141,6 +141,10 @@ PyContext_New
 PyContext_Type DATA
 PyCoro_New
 PyCoro_Type DATA
+PyCriticalSection2_Begin
+PyCriticalSection2_End
+PyCriticalSection_Begin
+PyCriticalSection_End
 PyDescr_IsData
 PyDescr_NewClassMethod
 PyDescr_NewGetSet
@@ -305,7 +309,6 @@ PyExc_GeneratorExit DATA
 PyExc_IOError DATA
 PyExc_ImportError DATA
 PyExc_ImportWarning DATA
-PyExc_IncompleteInputError DATA
 PyExc_IndentationError DATA
 PyExc_IndexError DATA
 PyExc_InterpreterError DATA
@@ -590,6 +593,8 @@ PyModule_SetDocString
 PyModule_Type DATA
 PyMonitoring_EnterScope
 PyMonitoring_ExitScope
+PyMutex_Lock
+PyMutex_Unlock
 PyNumber_Absolute
 PyNumber_Add
 PyNumber_And
@@ -798,6 +803,7 @@ PySet_New
 PySet_Pop
 PySet_Size
 PySet_Type DATA
+PySignal_SetWakeupFd
 PySlice_AdjustIndices
 PySlice_GetIndices
 PySlice_GetIndicesEx
@@ -1071,6 +1077,7 @@ PyUnstable_InterpreterFrame_GetLine
 PyUnstable_InterpreterState_GetMainModule
 PyUnstable_Long_CompactValue
 PyUnstable_Long_IsCompact
+PyUnstable_Object_ClearWeakRefsNoCallbacks
 PyUnstable_Object_GC_NewWithExtraData
 PyUnstable_PerfMapState_Fini
 PyUnstable_PerfMapState_Init
@@ -1212,6 +1219,7 @@ _PyBytesWriter_Resize
 _PyBytesWriter_WriteBytes
 _PyBytes_DecodeEscape
 _PyBytes_Find
+_PyBytes_Join
 _PyBytes_Repeat
 _PyBytes_Resize
 _PyBytes_ReverseFind
@@ -1254,8 +1262,10 @@ _PyCrossInterpreterData_ReleaseAndRawFree
 _PyCrossInterpreterData_UnregisterClass
 _PyDeadline_Get
 _PyDeadline_Init
+_PyDict_DelItemIf
 _PyDict_DelItem_KnownHash
 _PyDict_FromItems
+_PyDict_GetItemRef_KnownHash_LockHeld
 _PyDict_GetItemStringWithError
 _PyDict_GetItem_KnownHash
 _PyDict_LoadGlobal
@@ -1263,6 +1273,7 @@ _PyDict_MergeEx
 _PyDict_NewPresized
 _PyDict_Pop
 _PyDict_SetItem_KnownHash
+_PyDict_SetItem_KnownHash_LockHeld
 _PyDict_SetItem_Take2
 _PyDict_SizeOf
 _PyErr_BadInternalCall
@@ -1292,12 +1303,14 @@ _PyEval_GetBuiltin
 _PyEval_MakePendingCalls
 _PyEval_MatchClass
 _PyEval_MatchKeys
+_PyEval_MonitorRaise
 _PyEval_SetProfile
 _PyEval_SliceIndex
 _PyEval_SliceIndexNotNone
 _PyEval_UnpackIterable
 _PyEvent_IsSet
 _PyEvent_Notify
+_PyExc_IncompleteInputError DATA
 _PyFloat_ExactDealloc
 _PyFrame_IsEntryFrame
 _PyFunction_SetVersion
@@ -1384,8 +1397,6 @@ _PyMonitoring_FirePyYieldEvent
 _PyMonitoring_FireRaiseEvent
 _PyMonitoring_FireReraiseEvent
 _PyMonitoring_FireStopIterationEvent
-_PyMutex_LockSlow
-_PyMutex_UnlockSlow
 _PyNamespace_New
 _PyNone_Type DATA
 _PyNotImplemented_Type DATA
@@ -1431,6 +1442,9 @@ _PyRWMutex_Lock
 _PyRWMutex_RLock
 _PyRWMutex_RUnlock
 _PyRWMutex_Unlock
+_PyRecursiveMutex_IsLockedByCurrentThread
+_PyRecursiveMutex_Lock
+_PyRecursiveMutex_Unlock
 _PyRuntime DATA
 _PySemaphore_Destroy
 _PySemaphore_Init
@@ -1451,7 +1465,6 @@ _PySlice_FromIndices
 _PySlice_GetLongIndices
 _PyStack_AsDict
 _PyState_AddModule
-_PyStaticType_FiniForExtension
 _PyStaticType_InitForExtension
 _PyStructSequence_NewType
 _PySuper_Lookup
@@ -1460,6 +1473,8 @@ _PySys_GetSizeOf
 _PyThreadState_GetCurrent
 _PyThreadState_GetDict
 _PyThreadState_Init
+_PyThreadState_New
+_PyThreadState_NewBound
 _PyThreadState_PopFrame
 _PyThreadState_Prealloc
 _PyThread_CurrentFrames
@@ -1514,6 +1529,9 @@ _PyUnicode_Equal
 _PyUnicode_EqualToASCIIString
 _PyUnicode_ExactDealloc
 _PyUnicode_FromId
+_PyUnicode_InternImmortal
+_PyUnicode_InternInPlace
+_PyUnicode_InternMortal
 _PyUnicode_IsAlpha
 _PyUnicode_IsDecimalDigit
 _PyUnicode_IsDigit
