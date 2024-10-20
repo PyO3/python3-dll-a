@@ -775,6 +775,7 @@ PyLong_FromUInt64
 PyLong_AsInt64
 PyLong_AsUInt64
 PyType_GetBaseByToken
+PyUnicode_Equal
 PyBaseObject_Type DATA
 PyBool_Type DATA
 PyByteArrayIter_Type DATA
