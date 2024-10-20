@@ -1524,6 +1524,9 @@ _PyUnicode_FormatLong
 _PyUnicode_FromASCII
 _PyUnicode_FromId
 _PyUnicode_InsertThousandsGrouping
+_PyUnicode_InternImmortal
+_PyUnicode_InternInPlace
+_PyUnicode_InternMortal
 _PyUnicode_IsAlpha
 _PyUnicode_IsCaseIgnorable
 _PyUnicode_IsCased
