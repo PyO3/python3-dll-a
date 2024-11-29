@@ -91,7 +91,7 @@
 //! -----------------------------------------------------------
 //!
 //! As an advanced feature, `python3-dll-a` can generate Python version
-//! specific import libraries such as `python39.lib`.
+//! specific import libraries such as `python39.lib` or `python313t.lib`.
 //!
 //! See the [`ImportLibraryGenerator`] builder API description for details.
 
@@ -137,6 +137,9 @@ pub enum PythonImplementation {
 /// Generates `python3.dll` or `pythonXY.dll` import library directly from the
 /// embedded Python ABI definitions data for the specified compile target.
 ///
+/// ABI-tagged versioned Python DLLs such as `python313t.dll` are also supported
+/// via an optional ABI flags string parameter.
+///
 /// Example usage
 /// -------------
 ///
@@ -162,6 +165,13 @@ pub enum PythonImplementation {
 /// // Generate `python38.lib` in "target/python3-lib"
 /// ImportLibraryGenerator::new("x86_64", "msvc")
 ///     .version(Some((3, 8)))
+///     .generate(Path::new("target/python3-lib"))
+///     .unwrap();
+///
+/// // Generate `python313t.lib` in "target/python3-lib"
+/// ImportLibraryGenerator::new("x86_64", "msvc")
+///     .version(Some((3, 13)))
+///     .abiflags(Some("t"))
 ///     .generate(Path::new("target/python3-lib"))
 ///     .unwrap();
 /// ```

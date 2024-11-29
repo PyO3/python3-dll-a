@@ -95,14 +95,14 @@ Generating version-specific `python3y.dll` import libraries
 -----------------------------------------------------------
 
 As an advanced feature, `python3-dll-a` can generate Python version
-specific import libraries such as `python39.lib`.
+specific import libraries such as `python39.lib` or `python313t.lib`.
 
 See the `ImportLibraryGenerator` builder API description for details.
 
 Maintenance
 -----------
 
-This crate embeds Module-Defitions based on the `stable_abi.toml` file from CPython.
+This crate embeds Module-Definitions based on the `stable_abi.toml` file from CPython.
 
 The upstream version of this file is located in the [CPython project][cpython]
 repository under the path `Misc/stable_abi.toml`.
