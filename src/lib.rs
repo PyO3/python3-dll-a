@@ -555,6 +555,15 @@ mod tests {
                 .unwrap();
         }
 
+        // Free-threaded CPython v3.13+
+        for minor in 13..=13 {
+            ImportLibraryGenerator::new("x86_64", "gnu")
+                .version(Some((3, minor)))
+                .abiflags(Some("t"))
+                .generate(&dir)
+                .unwrap();
+        }
+
         // PyPy
         for minor in 7..=10 {
             ImportLibraryGenerator::new("x86_64", "gnu")
@@ -590,6 +599,15 @@ mod tests {
         for minor in 7..=13 {
             ImportLibraryGenerator::new("x86_64", "msvc")
                 .version(Some((3, minor)))
+                .generate(&dir)
+                .unwrap();
+        }
+
+        // Free-threaded CPython v3.13+
+        for minor in 13..=13 {
+            ImportLibraryGenerator::new("x86_64", "msvc")
+                .version(Some((3, minor)))
+                .abiflags(Some("t"))
                 .generate(&dir)
                 .unwrap();
         }
