@@ -7,7 +7,7 @@ jobs:
     name: Collect pythonXY.dll
     runs-on: windows-latest
     steps:
-      - uses: actions/setup-python@v5
+      - uses: Quansight-Labs/setup-python@v5
         with:
           python-version: |
               pypy3.8
@@ -20,12 +20,13 @@ jobs:
               3.11
               3.12
               3.13
+              3.13t
           allow-prereleases: true
       - name: Copy pythonXY.dll
         shell: bash
         run: |
           set -e
-          for VER in 3.7 3.8 3.9 3.10 3.11 3.12 3.13; do
+          for VER in 3.7 3.8 3.9 3.10 3.11 3.12 3.13 3.13t; do
             VER_NUM=$(echo $VER | sed 's/\.//')
             PREFIX=$(py -$VER -c "import sys; print(sys.base_prefix, end='')")
             cp "$PREFIX/python$VER_NUM.dll" .
