@@ -649,6 +649,33 @@ mod tests {
         dir.push("aarch64-pc-windows-msvc");
         dir.push("python3-dll");
 
-        generate_implib_for_target(&dir, "aarch64", "msvc").unwrap();
+        ImportLibraryGenerator::new("aarch64", "msvc")
+            .generate(&dir)
+            .unwrap();
+
+        for minor in 7..=13 {
+            ImportLibraryGenerator::new("aarch64", "msvc")
+                .version(Some((3, minor)))
+                .generate(&dir)
+                .unwrap();
+        }
+
+        // Free-threaded CPython v3.13+
+        for minor in 13..=13 {
+            ImportLibraryGenerator::new("aarch64", "msvc")
+                .version(Some((3, minor)))
+                .abiflags(Some("t"))
+                .generate(&dir)
+                .unwrap();
+        }
+
+        // PyPy
+        for minor in 7..=10 {
+            ImportLibraryGenerator::new("aarch64", "msvc")
+                .version(Some((3, minor)))
+                .implementation(PythonImplementation::PyPy)
+                .generate(&dir)
+                .unwrap();
+        }
     }
 }
