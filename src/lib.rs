@@ -97,6 +97,7 @@
 
 #![deny(missing_docs)]
 #![allow(clippy::needless_doctest_main)]
+#![allow(clippy::uninlined_format_args)]
 
 use std::env;
 use std::fs::{create_dir_all, write};
@@ -200,6 +201,7 @@ impl ImportLibraryGenerator {
     ///
     /// The compile target environment ABI name (as in `CARGO_CFG_TARGET_ENV`)
     /// is passed in `env`.
+    #[must_use]
     pub fn new(arch: &str, env: &str) -> Self {
         ImportLibraryGenerator {
             arch: arch.to_string(),
@@ -293,8 +295,7 @@ impl ImportLibraryGenerator {
                 _ => return Err(Error::new(ErrorKind::Other, "Unsupported Python version")),
             },
             PythonImplementation::PyPy => match self.version {
-                Some((3, 7)) => ("libpypy3-c.def", include_str!("libpypy3-c.def")),
-                Some((3, 8)) => ("libpypy3-c.def", include_str!("libpypy3-c.def")),
+                Some((3, 7)) | Some((3, 8)) => ("libpypy3-c.def", include_str!("libpypy3-c.def")),
                 Some((3, 9)) => ("libpypy3.9-c.def", include_str!("libpypy3.9-c.def")),
                 Some((3, 10)) => ("libpypy3.10-c.def", include_str!("libpypy3.10-c.def")),
                 _ => return Err(Error::new(ErrorKind::Other, "Unsupported PyPy version")),
@@ -500,7 +501,7 @@ fn get_mingw_dlltool(arch: &str) -> Result<Command> {
     }
 }
 
-/// Finds the `zig` executable (when built by ``maturin --zig`).
+/// Finds the `zig` executable (when built by `maturin --zig`).
 ///
 /// Examines the `ZIG_COMMAND` environment variable
 /// to find out if `zig cc` is being used as the linker.
