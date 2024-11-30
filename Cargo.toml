@@ -1,8 +1,8 @@
 [package]
 name = "python3-dll-a"
-version = "0.2.10"
+version = "0.2.11"
 edition = "2021"
-description = "Standalone python3(y).dll import library generator"
+description = "Standalone python3(y)(t).dll import library generator"
 repository = "https://github.com/PyO3/python3-dll-a"
 authors = ["Sergey Kvachonok <ravenexp@gmail.com>", "messense <messense@icloud.com>", "Adam Reichold <adam.reichold@t-online.de>"]
 license = "MIT"

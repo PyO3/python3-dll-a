@@ -1,12 +1,12 @@
-Standalone `python3(y).dll` import library generator
-====================================================
+Standalone `python3(y)(t).dll` import library generator
+=======================================================
 
 [![Actions Status](https://github.com/PyO3/python3-dll-a/workflows/Test/badge.svg)](https://github.com/PyO3/python3-dll-a/actions)
 [![Crate](https://img.shields.io/crates/v/python3-dll-a.svg)](https://crates.io/crates/python3-dll-a)
 [![Documentation](https://docs.rs/python3-dll-a/badge.svg)](https://docs.rs/python3-dll-a)
 
 Generates import libraries for the Python DLL
-(either `python3.dll` or `python3y.dll`)
+(either `python3.dll` or `python3y(t).dll`)
 for MinGW-w64 and MSVC (cross-)compile targets.
 
 This crate **does not require** Python 3 distribution files
