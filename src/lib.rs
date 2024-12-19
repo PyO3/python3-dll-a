@@ -316,9 +316,10 @@ impl ImportLibraryGenerator {
     ///
     /// Returns the full import library file path under `out_dir`.
     fn implib_file_path(&self, out_dir: &Path, libext: &str) -> PathBuf {
+        let abiflags = self.abiflags.as_deref().unwrap_or_default();
         let libname = match self.version {
             Some((major, minor)) => {
-                format!("python{}{}{}", major, minor, libext)
+                format!("python{}{}{}{}", major, minor, abiflags, libext)
             }
             None => format!("python3{}", libext),
         };
@@ -663,11 +664,13 @@ mod tests {
 
         // Free-threaded CPython v3.13+
         for minor in 13..=13 {
-            ImportLibraryGenerator::new("aarch64", "msvc")
-                .version(Some((3, minor)))
-                .abiflags(Some("t"))
-                .generate(&dir)
-                .unwrap();
+            let mut generator = ImportLibraryGenerator::new("aarch64", "msvc");
+            generator.version(Some((3, minor))).abiflags(Some("t"));
+            let implib_file_path = generator.implib_file_path(&dir, IMPLIB_EXT_MSVC);
+            let implib_file_stem = implib_file_path.file_stem().unwrap().to_str().unwrap();
+            assert!(implib_file_stem.ends_with("t"));
+
+            generator.generate(&dir).unwrap();
         }
 
         // PyPy
