@@ -777,6 +777,8 @@ PyLong_AsUInt64
 PyType_GetBaseByToken
 PyUnicode_Equal
 PyType_Freeze
+Py_PACK_FULL_VERSION
+Py_PACK_VERSION
 PyBaseObject_Type DATA
 PyBool_Type DATA
 PyByteArrayIter_Type DATA
