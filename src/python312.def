@@ -1232,6 +1232,7 @@ _PyErr_Restore
 _PyErr_SetFromPyStatus
 _PyErr_SetHandledException
 _PyErr_SetKeyError
+_PyErr_SetLocaleString
 _PyErr_SetNone
 _PyErr_SetObject
 _PyErr_SetString
