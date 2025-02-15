@@ -298,6 +298,7 @@ impl ImportLibraryGenerator {
                 Some((3, 7)) | Some((3, 8)) => ("libpypy3-c.def", include_str!("libpypy3-c.def")),
                 Some((3, 9)) => ("libpypy3.9-c.def", include_str!("libpypy3.9-c.def")),
                 Some((3, 10)) => ("libpypy3.10-c.def", include_str!("libpypy3.10-c.def")),
+                Some((3, 11)) => ("libpypy3.11-c.def", include_str!("libpypy3.11-c.def")),
                 _ => return Err(Error::new(ErrorKind::Other, "Unsupported PyPy version")),
             },
         };
@@ -577,7 +578,7 @@ mod tests {
         }
 
         // PyPy
-        for minor in 7..=10 {
+        for minor in 7..=11 {
             ImportLibraryGenerator::new("x86_64", "gnu")
                 .version(Some((3, minor)))
                 .implementation(PythonImplementation::PyPy)
@@ -625,7 +626,7 @@ mod tests {
         }
 
         // PyPy
-        for minor in 7..=10 {
+        for minor in 7..=11 {
             ImportLibraryGenerator::new("x86_64", "msvc")
                 .version(Some((3, minor)))
                 .implementation(PythonImplementation::PyPy)
@@ -674,7 +675,7 @@ mod tests {
         }
 
         // PyPy
-        for minor in 7..=10 {
+        for minor in 7..=11 {
             ImportLibraryGenerator::new("aarch64", "msvc")
                 .version(Some((3, minor)))
                 .implementation(PythonImplementation::PyPy)
