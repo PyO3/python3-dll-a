@@ -13,6 +13,7 @@ jobs:
               pypy3.8
               pypy3.9
               pypy3.10
+              pypy3.11
               3.7
               3.8
               3.9
@@ -37,7 +38,7 @@ jobs:
           cp "$PREFIX/libpypy3-c.dll" .
 
           # PyPy 3.9 and later use libpypy3.Y-c.dll
-          for VER in 3.9 3.10; do
+          for VER in 3.9 3.10 3.11; do
             VER_NUM=$(echo $VER | sed 's/\.//')
             PREFIX=$(pypy$VER -c "import sys; print(sys.base_prefix, end='')")
             cp "$PREFIX/libpypy$VER-c.dll" .
