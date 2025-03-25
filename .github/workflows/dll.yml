@@ -7,7 +7,7 @@ jobs:
     name: Collect pythonXY.dll
     runs-on: windows-latest
     steps:
-      - uses: Quansight-Labs/setup-python@v5
+      - uses: actions/setup-python@v5
         with:
           python-version: |
               pypy3.8
