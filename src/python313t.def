@@ -1286,6 +1286,7 @@ _PyErr_FormatFromCause
 _PyErr_ProgramDecodedTextObject
 _PyErr_SetFromPyStatus
 _PyErr_SetKeyError
+_PyErr_SetLocaleString
 _PyErr_SetString
 _PyEvalFramePushAndInit
 _PyEval_AddPendingCall

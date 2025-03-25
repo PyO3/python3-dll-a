@@ -1019,6 +1019,7 @@ _PyPyTime_FromTime
 _PyPyTime_FromTimeAndFold
 _PyPyTuple_Resize
 _PyPyType_GetModuleByDef
+_PyPyType_GetQualName
 _PyPyType_Lookup
 _PyPyType_Name
 _PyPyUnicode_EQ

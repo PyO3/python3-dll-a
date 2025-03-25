@@ -768,6 +768,7 @@ PyPyUnicode_AsEncodedObject
 PyPyUnicode_AsEncodedString
 PyPyUnicode_AsLatin1String
 PyPyUnicode_AsMBCSString
+PyPyUnicode_AsRawUnicodeEscapeString
 PyPyUnicode_AsUCS4
 PyPyUnicode_AsUCS4Copy
 PyPyUnicode_AsUTF16String
@@ -795,6 +796,7 @@ PyPyUnicode_DecodeLatin1
 PyPyUnicode_DecodeLocale
 PyPyUnicode_DecodeLocaleAndSize
 PyPyUnicode_DecodeMBCS
+PyPyUnicode_DecodeRawUnicodeEscape
 PyPyUnicode_DecodeUTF16
 PyPyUnicode_DecodeUTF32
 PyPyUnicode_DecodeUTF8
