@@ -774,6 +774,9 @@ PyLong_FromInt64
 PyLong_FromUInt64
 PyLong_AsInt64
 PyLong_AsUInt64
+PyLong_AsNativeBytes
+PyLong_FromNativeBytes
+PyLong_FromUnsignedNativeBytes
 PyType_GetBaseByToken
 PyUnicode_Equal
 PyType_Freeze
