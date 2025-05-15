@@ -1470,6 +1470,10 @@ _PyStaticType_InitForExtension
 _PyStructSequence_NewType
 _PySuper_Lookup
 _PySys_GetAttr
+_PySys_GetOptionalAttr
+_PySys_GetOptionalAttrString
+_PySys_GetRequiredAttr
+_PySys_GetRequiredAttrString
 _PySys_GetSizeOf
 _PyThreadState_GetCurrent
 _PyThreadState_GetDict
@@ -1506,6 +1510,7 @@ _PyTuple_FromArraySteal
 _PyTuple_Resize
 _PyType_GetDict
 _PyType_GetModuleByDef2
+_PyType_GetModuleByDef3
 _PyType_Lookup
 _PyType_LookupRef
 _PyType_Name

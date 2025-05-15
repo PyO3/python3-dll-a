@@ -1416,8 +1416,14 @@ _PySlice_GetLongIndices
 _PyStack_AsDict
 _PyState_AddModule
 _PyStructSequence_NewType
+_PySys_Audit
 _PySys_GetAttr
+_PySys_GetOptionalAttr
+_PySys_GetOptionalAttrString
+_PySys_GetRequiredAttr
+_PySys_GetRequiredAttrString
 _PySys_GetSizeOf
+_PySys_SetAttr
 _PyThreadState_Bind
 _PyThreadState_DeleteCurrent
 _PyThreadState_DeleteExcept
