@@ -292,6 +292,11 @@ impl ImportLibraryGenerator {
                     None => ("python313.def", include_str!("python313.def")),
                     _ => return Err(Error::new(ErrorKind::Other, "Unsupported Python ABI flags")),
                 },
+                Some((3, 14)) => match self.abiflags.as_deref() {
+                    Some("t") => ("python314t.def", include_str!("python314t.def")),
+                    None => ("python314.def", include_str!("python314.def")),
+                    _ => return Err(Error::new(ErrorKind::Other, "Unsupported Python ABI flags")),
+                },
                 _ => return Err(Error::new(ErrorKind::Other, "Unsupported Python version")),
             },
             PythonImplementation::PyPy => match self.version {
@@ -561,7 +566,7 @@ mod tests {
             .generate(&dir)
             .unwrap();
 
-        for minor in 7..=13 {
+        for minor in 7..=14 {
             ImportLibraryGenerator::new("x86_64", "gnu")
                 .version(Some((3, minor)))
                 .generate(&dir)
@@ -569,7 +574,7 @@ mod tests {
         }
 
         // Free-threaded CPython v3.13+
-        for minor in 13..=13 {
+        for minor in 13..=14 {
             ImportLibraryGenerator::new("x86_64", "gnu")
                 .version(Some((3, minor)))
                 .abiflags(Some("t"))
@@ -609,7 +614,7 @@ mod tests {
             .generate(&dir)
             .unwrap();
 
-        for minor in 7..=13 {
+        for minor in 7..=14 {
             ImportLibraryGenerator::new("x86_64", "msvc")
                 .version(Some((3, minor)))
                 .generate(&dir)
@@ -617,7 +622,7 @@ mod tests {
         }
 
         // Free-threaded CPython v3.13+
-        for minor in 13..=13 {
+        for minor in 13..=14 {
             ImportLibraryGenerator::new("x86_64", "msvc")
                 .version(Some((3, minor)))
                 .abiflags(Some("t"))
@@ -656,7 +661,7 @@ mod tests {
             .generate(&dir)
             .unwrap();
 
-        for minor in 7..=13 {
+        for minor in 7..=14 {
             ImportLibraryGenerator::new("aarch64", "msvc")
                 .version(Some((3, minor)))
                 .generate(&dir)
@@ -664,7 +669,7 @@ mod tests {
         }
 
         // Free-threaded CPython v3.13+
-        for minor in 13..=13 {
+        for minor in 13..=14 {
             let mut generator = ImportLibraryGenerator::new("aarch64", "msvc");
             generator.version(Some((3, minor))).abiflags(Some("t"));
             let implib_file_path = generator.implib_file_path(&dir, IMPLIB_EXT_MSVC);
