@@ -2,6 +2,12 @@
 
 All notable changes to this project will be documented in this file.
 
+## [0.2.14] - 2025-05-15
+
+### Features
+
+- Add Python 3.14 (beta) support in [#94](https://github.com/PyO3/python3-dll-a/pull/94)
+
 ## [0.2.13] - 2025-02-16
 
 ### Features
