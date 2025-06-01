@@ -782,6 +782,10 @@ PyUnicode_Equal
 PyType_Freeze
 Py_PACK_FULL_VERSION
 Py_PACK_VERSION
+PySys_GetAttr
+PySys_GetAttrString
+PySys_GetOptionalAttr
+PySys_GetOptionalAttrString
 PyBaseObject_Type DATA
 PyBool_Type DATA
 PyByteArrayIter_Type DATA
