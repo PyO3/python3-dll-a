@@ -1218,6 +1218,7 @@ _PyBytesWriter_Prepare
 _PyBytesWriter_Resize
 _PyBytesWriter_WriteBytes
 _PyBytes_DecodeEscape
+_PyBytes_DecodeEscape2
 _PyBytes_Find
 _PyBytes_Join
 _PyBytes_Repeat
@@ -1305,6 +1306,7 @@ _PyEval_MakePendingCalls
 _PyEval_MatchClass
 _PyEval_MatchKeys
 _PyEval_MonitorRaise
+_PyEval_NoToolsForUnwind
 _PyEval_SetProfile
 _PyEval_SliceIndex
 _PyEval_SliceIndexNotNone
@@ -1529,6 +1531,7 @@ _PyUnicode_AsUTF8String
 _PyUnicode_CheckConsistency
 _PyUnicode_Copy
 _PyUnicode_DecodeUnicodeEscapeInternal
+_PyUnicode_DecodeUnicodeEscapeInternal2
 _PyUnicode_EncodeUTF16
 _PyUnicode_EncodeUTF32
 _PyUnicode_Equal

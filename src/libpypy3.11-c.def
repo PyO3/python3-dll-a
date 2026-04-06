@@ -39,6 +39,8 @@ PyExpat_XML_ParserCreate_MM
 PyExpat_XML_ParserFree
 PyExpat_XML_ParserReset
 PyExpat_XML_ResumeParser
+PyExpat_XML_SetAllocTrackerActivationThreshold
+PyExpat_XML_SetAllocTrackerMaximumAmplification
 PyExpat_XML_SetAttlistDeclHandler
 PyExpat_XML_SetBase
 PyExpat_XML_SetBillionLaughsAttackProtectionActivationThreshold
@@ -400,6 +402,7 @@ PyPyGC_Enable
 PyPyGC_IsEnabled
 PyPyGILState_Check
 PyPyGILState_Ensure
+PyPyGILState_GetThisThreadState
 PyPyGILState_Release
 PyPyGen_Check
 PyPyGen_CheckExact
@@ -515,6 +518,8 @@ PyPyModule_Check
 PyPyModule_CheckExact
 PyPyModule_Create2
 PyPyModule_ExecDef
+PyPyModule_FromDefAndSpec
+PyPyModule_FromDefAndSpec2
 PyPyModule_GetDef
 PyPyModule_GetDict
 PyPyModule_GetFilenameObject
