@@ -786,6 +786,22 @@ PySys_GetAttr
 PySys_GetAttrString
 PySys_GetOptionalAttr
 PySys_GetOptionalAttrString
+PyABIInfo_Check
+PyModule_FromSlotsAndSpec
+PyModule_Exec
+PyModule_GetToken
+PyType_GetModuleByToken
+PyModule_GetStateSize
+PyDict_SetDefaultRef
+Py_SIZE
+Py_IS_TYPE
+Py_SET_SIZE
+PyLong_GetNativeLayout
+PyLong_Export
+PyLong_FreeExport
+PyLongWriter_Create
+PyLongWriter_Finish
+PyLongWriter_Discard
 PyBaseObject_Type DATA
 PyBool_Type DATA
 PyByteArrayIter_Type DATA
