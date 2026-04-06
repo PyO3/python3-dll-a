@@ -149,8 +149,10 @@ PyContext_Type DATA
 PyCoro_New
 PyCoro_Type DATA
 PyCriticalSection2_Begin
+PyCriticalSection2_BeginMutex
 PyCriticalSection2_End
 PyCriticalSection_Begin
+PyCriticalSection_BeginMutex
 PyCriticalSection_End
 PyDescr_IsData
 PyDescr_NewClassMethod
@@ -634,6 +636,7 @@ PyModule_SetDocString
 PyModule_Type DATA
 PyMonitoring_EnterScope
 PyMonitoring_ExitScope
+PyMutex_IsLocked
 PyMutex_Lock
 PyMutex_Unlock
 PyNumber_Absolute
@@ -1017,6 +1020,7 @@ PyUnicodeWriter_DecodeUTF8Stateful
 PyUnicodeWriter_Discard
 PyUnicodeWriter_Finish
 PyUnicodeWriter_Format
+PyUnicodeWriter_WriteASCII
 PyUnicodeWriter_WriteChar
 PyUnicodeWriter_WriteRepr
 PyUnicodeWriter_WriteStr
@@ -1146,6 +1150,8 @@ PyUnstable_PerfMapState_Fini
 PyUnstable_PerfMapState_Init
 PyUnstable_PerfTrampoline_CompileCode
 PyUnstable_PerfTrampoline_SetPersistAfterFork
+PyUnstable_ThreadState_ResetStackProtection
+PyUnstable_ThreadState_SetStackProtection
 PyUnstable_TryIncRef
 PyUnstable_Type_AssignVersionTag
 PyUnstable_WritePerfMapEntry
@@ -1289,7 +1295,7 @@ _PyBytesWriter_Init
 _PyBytesWriter_Prepare
 _PyBytesWriter_Resize
 _PyBytesWriter_WriteBytes
-_PyBytes_DecodeEscape
+_PyBytes_DecodeEscape2
 _PyBytes_Find
 _PyBytes_FromData
 _PyBytes_FromXIData
@@ -1301,12 +1307,18 @@ _PyBytes_Resize
 _PyBytes_ReverseFind
 _PyCapsule_SetTraverse
 _PyCode_CheckLineNumber
+_PyCode_CheckNoExternalState
+_PyCode_CheckNoInternalState
+_PyCode_CheckPureFunction
 _PyCode_ConstantKey
 _PyCode_FromXIData
+_PyCode_GetPureScriptXIData
+_PyCode_GetScriptXIData
 _PyCode_GetVarCounts
 _PyCode_GetXIData
 _PyCode_ReturnsOnlyNone
 _PyCode_SetUnboundVarCounts
+_PyCode_VerifyStateless
 _PyCompile_Assemble
 _PyCompile_CleanDoc
 _PyCompile_CodeGen
@@ -1349,11 +1361,13 @@ _PyErr_Format
 _PyErr_FormatFromCause
 _PyErr_FormatNote
 _PyErr_FormatV
+_PyErr_GetRaisedException
 _PyErr_ProgramDecodedTextObject
 _PyErr_SetFromPyStatus
 _PyErr_SetInterpreterAlreadyRunning
 _PyErr_SetKeyError
 _PyErr_SetLocaleString
+_PyErr_SetRaisedException
 _PyErr_SetString
 _PyEvalFramePushAndInit
 _PyEval_AddPendingCall
@@ -1379,6 +1393,7 @@ _PyEval_MakePendingCalls
 _PyEval_MatchClass
 _PyEval_MatchKeys
 _PyEval_MonitorRaise
+_PyEval_NoToolsForUnwind
 _PyEval_SetProfile
 _PyEval_SliceIndex
 _PyEval_SliceIndexNotNone
@@ -1391,7 +1406,10 @@ _PyEvent_Notify
 _PyExc_IncompleteInputError DATA
 _PyFloat_ExactDealloc
 _PyFrame_IsEntryFrame
+_PyFunction_FromXIData
+_PyFunction_GetXIData
 _PyFunction_SetVersion
+_PyFunction_VerifyStateless
 _PyGen_FetchStopIterationValue
 _PyGen_SetStopIterationValue
 _PyGen_yf
@@ -1452,6 +1470,10 @@ _PyLong_Rshift
 _PyLong_Sign
 _PyLong_Size_t_Converter
 _PyLong_Subtract
+_PyLong_UInt16_Converter
+_PyLong_UInt32_Converter
+_PyLong_UInt64_Converter
+_PyLong_UInt8_Converter
 _PyLong_UnsignedInt_Converter
 _PyLong_UnsignedLongLong_Converter
 _PyLong_UnsignedLong_Converter
@@ -1508,6 +1530,7 @@ _PyObject_GetDictPtr
 _PyObject_GetMethod
 _PyObject_GetState
 _PyObject_GetXIData
+_PyObject_GetXIDataNoFallback
 _PyObject_IsFreed
 _PyObject_LookupSpecial
 _PyObject_LookupSpecialMethod
@@ -1601,6 +1624,7 @@ _PyTuple_FromArray
 _PyTuple_FromArraySteal
 _PyTuple_FromStackRefStealOnSuccess
 _PyTuple_Resize
+_PyType_GetBaseByToken_Borrow
 _PyType_GetDict
 _PyType_GetSlotWrapperNames
 _PyType_Lookup
@@ -1622,7 +1646,7 @@ _PyUnicode_AsUTF8NoNUL
 _PyUnicode_AsUTF8String
 _PyUnicode_CheckConsistency
 _PyUnicode_Copy
-_PyUnicode_DecodeUnicodeEscapeInternal
+_PyUnicode_DecodeUnicodeEscapeInternal2
 _PyUnicode_EncodeUTF16
 _PyUnicode_EncodeUTF32
 _PyUnicode_Equal
@@ -1671,21 +1695,26 @@ _PyXIData_Release
 _PyXIData_ReleaseAndRawFree
 _PyXIData_SetNotShareableError
 _PyXIData_UnregisterClass
-_PyXI_ApplyCapturedException
-_PyXI_ApplyError
-_PyXI_ApplyNamespace
-_PyXI_ClearExcInfo
+_PyXI_ClearResult
 _PyXI_EndInterpreter
 _PyXI_Enter
 _PyXI_ExcInfoAsObject
 _PyXI_Exit
-_PyXI_FillNamespaceFromDict
 _PyXI_FormatExcInfo
-_PyXI_FreeNamespace
-_PyXI_HasCapturedException
-_PyXI_InitExcInfo
-_PyXI_NamespaceFromNames
+_PyXI_FreeExcInfo
+_PyXI_FreeFailure
+_PyXI_FreeSession
+_PyXI_GetFailureCode
+_PyXI_GetMainNamespace
+_PyXI_GetPreserved
+_PyXI_InitFailure
+_PyXI_InitFailureUTF8
+_PyXI_NewExcInfo
+_PyXI_NewFailure
 _PyXI_NewInterpreter
+_PyXI_NewSession
+_PyXI_Preserve
+_PyXI_UnwrapNotShareableError
 _Py_BreakPoint
 _Py_BuildValue_SizeT
 _Py_CheckFunctionResult
@@ -1717,6 +1746,7 @@ _Py_HashDouble
 _Py_HashSecret DATA
 _Py_IncRef
 _Py_InitCleanup DATA
+_Py_InitDumpStack
 _Py_InitializeRecursionLimits
 _Py_IsInterpreterFinalizing
 _Py_IsValidFD
