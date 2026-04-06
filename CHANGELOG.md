@@ -2,6 +2,13 @@
 
 All notable changes to this project will be documented in this file.
 
+## [0.2.15] - 2026-04-06
+
+### Features
+
+- Update `python3.def` to latest in [#98](https://github.com/PyO3/python3-dll-a/pull/98)
+- Update `pythonXY.def` files in [#99](https://github.com/PyO3/python3-dll-a/pull/99)
+
 ## [0.2.14] - 2025-05-15
 
 ### Features
