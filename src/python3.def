@@ -796,6 +796,13 @@ PyDict_SetDefaultRef
 Py_SIZE
 Py_IS_TYPE
 Py_SET_SIZE
+PyObject_GetTypeData_DuringGC
+PyType_GetModuleState_DuringGC
+PyModule_GetState_DuringGC
+PyModule_GetToken_DuringGC
+PyType_GetBaseByToken_DuringGC
+PyType_GetModule_DuringGC
+PyType_GetModuleByToken_DuringGC
 PyLong_GetNativeLayout
 PyLong_Export
 PyLong_FreeExport
